@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Cultivo de Café - Plan y Tareas</title>
+	<style>
+		body { font-family: Arial, sans-serif; max-width: 800px; margin: 2rem auto; line-height: 1.6; padding: 0 1rem; }
+		header { text-align: center; margin-bottom: 1rem; }
+		.container { display: grid; grid-template-columns: 1fr; gap: 1rem; }
+		.card { border: 1px solid #ddd; padding: 1rem; border-radius: 6px; background: #fafafa; }
+		label { display:block; margin-bottom: .5rem; }
+		input[type="text"] { width: 100%; padding: .5rem; box-sizing: border-box; }
+		button { padding: .5rem 1rem; margin-top: .5rem; }
+		ul { padding-left: 1.2rem; }
+		.steps { list-style: decimal inside; }
+	</style>
+</head>
+<body>
+	<header>
+		<h1>Cultivo de Café</h1>
+		<p>Guía rápida y lista de tareas para el cultivo de café en finca pequeña.</p>
+	</header>
+
+	<div class="container">
+		<section class="card">
+			<h2>Plan de pasos principales</h2>
+			<ol class="steps">
+				<li>Selección del terreno y preparación del suelo (drenaje, pH, sombra).</li>
+				<li>Compra de plántulas certificadas y preparación de vivero.</li>
+				<li>Siembra y trasplante según la época adecuada.</li>
+				<li>Manejo de riego y fertilización balanceada.</li>
+				<li>Control de plagas y enfermedades (monitoreo y técnicas integradas).</li>
+				<li>Poda, manejo de sotobosque y sombreo.</li>
+				<li>Cosecha, beneficio y secado del grano.</li>
+				<li>Comercialización y prácticas postcosecha.</li>
+			</ol>
+		</section>
+
+		<section class="card">
+			<h2>Agregar tarea de la finca</h2>
+			<label for="nuevaTarea">Nueva tarea (ej.: regar sector A, podar lote 3):</label>
+			<input id="nuevaTarea" type="text" placeholder="Describe la tarea...">
+			<div>
+				<button type="button" onclick="agregarTarea()">Agregar</button>
+				<button type="button" onclick="limpiarTareas()">Limpiar todas</button>
+			</div>
+		</section>
+
+		<section class="card">
+			<h2>Mis tareas</h2>
+			<p>Total tareas = <span id="totalTareas">0</span></p>
+			<ul id="listaTareas"></ul>
+			<p>Consejo: haz clic en una tarea para marcarla como completada.</p>
+		</section>
+	</div>
+
+	<script>
+		function agregarTarea() {
+			const input = document.getElementById('nuevaTarea');
+			const texto = input.value.trim();
+
+			if (texto === '') return;
+
+			const lista = document.getElementById('listaTareas');
+			const item = document.createElement('li');
+			const checkbox = document.createElement('input');
+			checkbox.type = 'checkbox';
+			checkbox.style.marginRight = '0.5rem';
+			checkbox.onclick = actualizarContador;
+
+			const span = document.createElement('span');
+			span.textContent = texto;
+
+			const btnEliminar = document.createElement('button');
+			btnEliminar.textContent = 'Eliminar';
+			btnEliminar.style.marginLeft = '1rem';
+			btnEliminar.onclick = function() { lista.removeChild(item); actualizarContador(); };
+
+			item.appendChild(checkbox);
+			item.appendChild(span);
+			item.appendChild(btnEliminar);
+			lista.appendChild(item);
+
+			input.value = '';
+			input.focus();
+			actualizarContador();
+		}
+
+		function actualizarContador() {
+			const lista = document.getElementById('listaTareas');
+			const total = lista.children.length;
+			document.getElementById('totalTareas').textContent = total;
+		}
+
+		function limpiarTareas() {
+			const lista = document.getElementById('listaTareas');
+			lista.innerHTML = '';
+			actualizarContador();
+		}
+
+		// Permitir marcar texto como tachado cuando se marca la checkbox
+		document.getElementById('listaTareas').addEventListener('change', (e) => {
+			const target = e.target;
+			if (target.tagName.toLowerCase() === 'input' && target.type === 'checkbox') {
+				const span = target.nextSibling;
+				if (target.checked) span.style.textDecoration = 'line-through'; else span.style.textDecoration = 'none';
+			}
+		});
+	</script>
+</body>
+</html>
