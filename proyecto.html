@@ -5,15 +5,197 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Cultivo de Café - Plan y Tareas</title>
 	<style>
-		body { font-family: Arial, sans-serif; max-width: 800px; margin: 2rem auto; line-height: 1.6; padding: 0 1rem; }
-		header { text-align: center; margin-bottom: 1rem; }
-		.container { display: grid; grid-template-columns: 1fr; gap: 1rem; }
-		.card { border: 1px solid #ddd; padding: 1rem; border-radius: 6px; background: #fafafa; }
-		label { display:block; margin-bottom: .5rem; }
-		input[type="text"] { width: 100%; padding: .5rem; box-sizing: border-box; }
-		button { padding: .5rem 1rem; margin-top: .5rem; }
-		ul { padding-left: 1.2rem; }
-		.steps { list-style: decimal inside; }
+		:root {
+			--cafe-oscuro: #3d2a1f;
+			--cafe: #7a4b2a;
+			--cafe-claro: #d7b899;
+			--beige: #f7f0e8;
+			--verde: #2e6b4a;
+			--blanco: #ffffff;
+			--sombra: rgba(52, 28, 19, 0.15);
+		}
+
+		* { box-sizing: border-box; }
+
+		body {
+			margin: 0;
+			padding: 40px 20px;
+			font-family: Arial, sans-serif;
+			background: linear-gradient(135deg, #f6efe7 0%, #ead9c8 40%, #f9f3ee 100%);
+			color: var(--cafe-oscuro);
+		}
+
+		header {
+			text-align: center;
+			margin-bottom: 24px;
+		}
+
+		header h1 {
+			margin: 0;
+			font-size: clamp(2.2rem, 4vw, 4rem);
+			font-weight: 800;
+			letter-spacing: 1px;
+			color: var(--cafe-oscuro);
+		}
+
+		header p {
+			margin-top: 12px;
+			font-size: 1.08rem;
+			color: #5a3e2d;
+		}
+
+		.container {
+			display: grid;
+			grid-template-columns: 1fr;
+			gap: 22px;
+			max-width: 900px;
+			margin: 0 auto;
+		}
+
+		.card {
+			background: rgba(255, 255, 255, 0.72);
+			backdrop-filter: blur(8px);
+			border: 1px solid rgba(122, 75, 42, 0.12);
+			border-radius: 20px;
+			padding: 24px 26px;
+			box-shadow: 0 10px 28px var(--sombra);
+		}
+
+		h2 {
+			margin: 0 0 18px;
+			font-size: 2rem;
+			color: var(--cafe-oscuro);
+		}
+
+		.steps {
+			margin: 0;
+			padding-left: 22px;
+			font-size: 1.08rem;
+			line-height: 1.9;
+		}
+
+		.steps li {
+			padding-left: 8px;
+			margin-bottom: 4px;
+		}
+
+		label {
+			display: block;
+			margin-bottom: 10px;
+			font-weight: 600;
+			font-size: 1rem;
+		}
+
+		input[type="text"] {
+			width: 100%;
+			padding: 14px 16px;
+			border-radius: 12px;
+			border: 2px solid #d9c2a5;
+			background: #fffdfb;
+			font-size: 1rem;
+			outline: none;
+			transition: border-color 0.2s ease, box-shadow 0.2s ease;
+		}
+
+		input[type="text"]:focus {
+			border-color: var(--cafe);
+			box-shadow: 0 0 0 4px rgba(122, 75, 42, 0.12);
+		}
+
+		.botones {
+			display: flex;
+			gap: 12px;
+			flex-wrap: wrap;
+			margin-top: 16px;
+		}
+
+		button {
+			padding: 12px 18px;
+			border: none;
+			border-radius: 12px;
+			font-size: 0.96rem;
+			font-weight: 700;
+			cursor: pointer;
+			transition: transform 0.15s ease, box-shadow 0.15s ease;
+		}
+
+		button:hover {
+			transform: translateY(-1px);
+			box-shadow: 0 8px 18px rgba(61, 42, 31, 0.15);
+		}
+
+		button[type="button"]:first-of-type {
+			background: linear-gradient(135deg, var(--cafe) 0%, #9d6a45 100%);
+			color: var(--blanco);
+		}
+
+		button[type="button"]:last-of-type {
+			background: #efe5dc;
+			color: var(--cafe-oscuro);
+		}
+
+		#listaTareas {
+			list-style: none;
+			padding: 0;
+			margin: 14px 0 0;
+			display: grid;
+			gap: 10px;
+		}
+
+		#listaTareas li {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			gap: 10px;
+			background: #fffaf6;
+			padding: 12px 14px;
+			border: 1px solid #e7d5bd;
+			border-radius: 12px;
+			box-shadow: 0 3px 10px rgba(61, 42, 31, 0.05);
+		}
+
+		.tarea-izquierda {
+			display: flex;
+			align-items: center;
+			gap: 10px;
+			flex: 1;
+		}
+
+		.tarea-izquierda input[type="checkbox"] {
+			width: 16px;
+			height: 16px;
+			accent-color: var(--verde);
+			cursor: pointer;
+		}
+
+		.tarea-texto {
+			flex: 1;
+			font-size: 1rem;
+			word-break: break-word;
+		}
+
+		.tarea-completada {
+			text-decoration: line-through;
+			color: #7a7a7a;
+		}
+
+		.btn-eliminar {
+			background: #f1dcdc;
+			color: #7e2d2d;
+			padding: 8px 10px;
+			font-size: 0.8rem;
+		}
+
+		#totalTareas {
+			font-weight: 800;
+			color: var(--cafe);
+		}
+
+		.aviso {
+			margin-top: 14px;
+			font-style: italic;
+			color: #654839;
+		}
 	</style>
 </head>
 <body>
@@ -41,7 +223,7 @@
 			<h2>Agregar tarea de la finca</h2>
 			<label for="nuevaTarea">Nueva tarea (ej.: regar sector A, podar lote 3):</label>
 			<input id="nuevaTarea" type="text" placeholder="Describe la tarea...">
-			<div>
+			<div class="botones">
 				<button type="button" onclick="agregarTarea()">Agregar</button>
 				<button type="button" onclick="limpiarTareas()">Limpiar todas</button>
 			</div>
@@ -51,34 +233,44 @@
 			<h2>Mis tareas</h2>
 			<p>Total tareas = <span id="totalTareas">0</span></p>
 			<ul id="listaTareas"></ul>
-			<p>Consejo: haz clic en una tarea para marcarla como completada.</p>
+			<p class="aviso">Consejo: marca una tarea como completada cuando la hayas realizado.</p>
 		</section>
 	</div>
 
 	<script>
-		function agregarTarea() {
-			const input = document.getElementById('nuevaTarea');
-			const texto = input.value.trim();
+		const input = document.getElementById('nuevaTarea');
+		const lista = document.getElementById('listaTareas');
 
+		function agregarTarea() {
+			const texto = input.value.trim();
 			if (texto === '') return;
 
-			const lista = document.getElementById('listaTareas');
 			const item = document.createElement('li');
+			const contenedor = document.createElement('div');
+			contenedor.className = 'tarea-izquierda';
+
 			const checkbox = document.createElement('input');
 			checkbox.type = 'checkbox';
-			checkbox.style.marginRight = '0.5rem';
-			checkbox.onclick = actualizarContador;
+			checkbox.addEventListener('change', function() {
+				const span = this.nextElementSibling;
+				span.classList.toggle('tarea-completada', this.checked);
+			});
 
 			const span = document.createElement('span');
 			span.textContent = texto;
+			span.className = 'tarea-texto';
 
 			const btnEliminar = document.createElement('button');
 			btnEliminar.textContent = 'Eliminar';
-			btnEliminar.style.marginLeft = '1rem';
-			btnEliminar.onclick = function() { lista.removeChild(item); actualizarContador(); };
+			btnEliminar.className = 'btn-eliminar';
+			btnEliminar.onclick = function() {
+				lista.removeChild(item);
+				actualizarContador();
+			};
 
-			item.appendChild(checkbox);
-			item.appendChild(span);
+			contenedor.appendChild(checkbox);
+			contenedor.appendChild(span);
+			item.appendChild(contenedor);
 			item.appendChild(btnEliminar);
 			lista.appendChild(item);
 
@@ -88,23 +280,18 @@
 		}
 
 		function actualizarContador() {
-			const lista = document.getElementById('listaTareas');
 			const total = lista.children.length;
 			document.getElementById('totalTareas').textContent = total;
 		}
 
 		function limpiarTareas() {
-			const lista = document.getElementById('listaTareas');
 			lista.innerHTML = '';
 			actualizarContador();
 		}
 
-		// Permitir marcar texto como tachado cuando se marca la checkbox
-		document.getElementById('listaTareas').addEventListener('change', (e) => {
-			const target = e.target;
-			if (target.tagName.toLowerCase() === 'input' && target.type === 'checkbox') {
-				const span = target.nextSibling;
-				if (target.checked) span.style.textDecoration = 'line-through'; else span.style.textDecoration = 'none';
+		input.addEventListener('keydown', function(event) {
+			if (event.key === 'Enter') {
+				agregarTarea();
 			}
 		});
 	</script>
