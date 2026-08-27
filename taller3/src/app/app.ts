@@ -1,6 +1,6 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
-import { ApiProduct, ApiService } from './api.service';
+import { ApiProduct, ApiService, ApiUser, RickCharacter } from './api.service';
 
 @Component({
   selector: 'app-root',
@@ -16,6 +16,9 @@ export class App implements OnInit {
   apiQuote = 'Cada taza cuenta una historia.';
   apiQuoteAuthor = 'Cafés de Origen';
   apiLoading = true;
+  apiCategories: string[] = [];
+  apiUsers: ApiUser[] = [];
+  rickCharacters: RickCharacter[] = [];
 
   ngOnInit(): void {
     this.apiService.getProducts().subscribe((products) => {
@@ -26,6 +29,18 @@ export class App implements OnInit {
     this.apiService.getQuote().subscribe((quote) => {
       this.apiQuote = quote.quote;
       this.apiQuoteAuthor = quote.author;
+    });
+
+    this.apiService.getCategories().subscribe((categories) => {
+      this.apiCategories = categories.slice(0, 4);
+    });
+
+    this.apiService.getUsers().subscribe((users) => {
+      this.apiUsers = users;
+    });
+
+    this.apiService.getRickCharacters().subscribe((characters) => {
+      this.rickCharacters = characters;
     });
   }
 

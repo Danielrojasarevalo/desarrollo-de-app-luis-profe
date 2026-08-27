@@ -49,8 +49,107 @@
 	color: var(--text-light);
 }
 
+.api-details {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 22px;
+	max-width: 1150px;
+	margin: 28px auto 0;
+}
+
+.api-panel {
+	padding: 24px;
+	background: rgba(255, 250, 243, .7);
+	border-top: 3px solid var(--coffee-light);
+}
+
+.category-list {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px;
+	margin-top: 16px;
+}
+
+.category-list span {
+	padding: 7px 12px;
+	background: var(--cream-dark);
+	border-radius: 20px;
+	font-size: 13px;
+}
+
+.user-list {
+	margin-top: 13px;
+	color: var(--text-light);
+	font-size: 14px;
+}
+
+.user-list p + p {
+	margin-top: 8px;
+}
+
+.rick-section {
+	display: grid;
+	grid-template-columns: minmax(220px, .75fr) 1.25fr;
+	gap: 28px;
+	max-width: 1150px;
+	margin: 34px auto 0;
+	padding-top: 30px;
+	border-top: 1px solid rgba(111, 66, 40, .18);
+}
+
+.rick-section h3 {
+	margin: 8px 0;
+}
+
+.rick-section > div > p {
+	color: var(--text-light);
+	font-size: 14px;
+}
+
+.rick-grid {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	gap: 14px;
+}
+
+.rick-card {
+	background: #fffaf3;
+	border: 1px solid var(--border);
+	border-radius: 8px;
+	overflow: hidden;
+}
+
+.rick-card img {
+	display: block;
+	width: 100%;
+	aspect-ratio: 1;
+	object-fit: cover;
+}
+
+.rick-card div {
+	padding: 12px;
+}
+
+.rick-card p {
+	margin-top: 4px;
+	color: var(--text-light);
+	font-size: 12px;
+}
+
 @media (max-width: 800px) {
 	.api-grid {
 		grid-template-columns: 1fr;
+	}
+
+	.api-details {
+		grid-template-columns: 1fr;
+	}
+
+	.rick-section {
+		grid-template-columns: 1fr;
+	}
+
+	.rick-grid {
+		grid-template-columns: repeat(3, 1fr);
 	}
 }

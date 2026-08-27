@@ -10,7 +10,7 @@ To start a local development server, run:
 ng serve
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application consumes the DummyJSON products and quotes APIs, with local fallback data when the network is unavailable. The application will automatically reload whenever you modify any of the source files.
+Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application consumes the DummyJSON products, quotes, categories and users APIs, plus the Rick and Morty character API, with local fallback data when the network is unavailable. The application will automatically reload whenever you modify any of the source files.
 
 ## Code scaffolding
 

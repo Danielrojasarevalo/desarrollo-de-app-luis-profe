@@ -19,11 +19,41 @@ interface QuoteResponse {
   author: string;
 }
 
+export interface ApiUser {
+  id: number;
+  firstName: string;
+  lastName: string;
+  company: { name: string };
+}
+
+interface UsersResponse {
+  users: ApiUser[];
+}
+
+interface CategoriesResponse {
+  categories: string[];
+}
+
+export interface RickCharacter {
+  id: number;
+  name: string;
+  status: string;
+  species: string;
+  image: string;
+}
+
+interface RickCharactersResponse {
+  results: RickCharacter[];
+}
+
 @Injectable({ providedIn: 'root' })
 export class ApiService {
   private readonly http = inject(HttpClient);
   private readonly productsUrl = 'https://dummyjson.com/products/category/groceries?limit=3';
   private readonly quoteUrl = 'https://dummyjson.com/quotes/random';
+  private readonly categoriesUrl = 'https://dummyjson.com/products/categories';
+  private readonly usersUrl = 'https://dummyjson.com/users?limit=3';
+  private readonly rickCharactersUrl = 'https://rickandmortyapi.com/api/character';
 
   getProducts() {
     const fallback: ApiProduct[] = [
@@ -59,6 +89,57 @@ export class ApiService {
   getQuote() {
     return this.http.get<QuoteResponse>(this.quoteUrl).pipe(
       catchError(() => of({ quote: 'Cada taza cuenta una historia.', author: 'Cafés de Origen' }))
+    );
+  }
+
+  getCategories() {
+    return this.http.get<CategoriesResponse>(this.categoriesUrl).pipe(
+      map((response) => response.categories),
+      catchError(() => of(['Groceries', 'Beauty', 'Fragrances', 'Furniture']))
+    );
+  }
+
+  getUsers() {
+    return this.http.get<UsersResponse>(this.usersUrl).pipe(
+      map((response) => response.users),
+      catchError(() =>
+        of([
+          { id: 1, firstName: 'Laura', lastName: 'Gómez', company: { name: 'Finca La Esperanza' } },
+          { id: 2, firstName: 'Carlos', lastName: 'Rojas', company: { name: 'Café del Valle' } },
+          { id: 3, firstName: 'Mariana', lastName: 'Díaz', company: { name: 'Tostadores Unidos' } }
+        ])
+      )
+    );
+  }
+
+  getRickCharacters() {
+    const fallback: RickCharacter[] = [
+      {
+        id: 1,
+        name: 'Rick Sanchez',
+        status: 'Alive',
+        species: 'Human',
+        image: 'https://rickandmortyapi.com/api/character/avatar/1.jpeg'
+      },
+      {
+        id: 2,
+        name: 'Morty Smith',
+        status: 'Alive',
+        species: 'Human',
+        image: 'https://rickandmortyapi.com/api/character/avatar/2.jpeg'
+      },
+      {
+        id: 3,
+        name: 'Summer Smith',
+        status: 'Alive',
+        species: 'Human',
+        image: 'https://rickandmortyapi.com/api/character/avatar/3.jpeg'
+      }
+    ];
+
+    return this.http.get<RickCharactersResponse>(this.rickCharactersUrl).pipe(
+      map((response) => response.results.slice(0, 3)),
+      catchError(() => of(fallback))
     );
   }
 }

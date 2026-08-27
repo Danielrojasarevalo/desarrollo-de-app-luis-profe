@@ -405,6 +405,45 @@
                     }
                 </div>
             }
+
+            <div class="api-details">
+                <div class="api-panel">
+                    <span class="section-label">CATEGORÍAS DISPONIBLES</span>
+                    <div class="category-list">
+                        @for (category of apiCategories; track category) {
+                            <span>{{ category }}</span>
+                        }
+                    </div>
+                </div>
+
+                <div class="api-panel">
+                    <span class="section-label">COMUNIDAD CAFETERA</span>
+                    <div class="user-list">
+                        @for (user of apiUsers; track user.id) {
+                            <p><strong>{{ user.firstName }} {{ user.lastName }}</strong> · {{ user.company.name }}</p>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <div class="rick-section">
+                <div>
+                    <span class="section-label">UNIVERSO RICK AND MORTY</span>
+                    <h3>Personajes consultados desde la API</h3>
+                    <p>Una colección adicional cargada desde rickandmortyapi.com.</p>
+                </div>
+                <div class="rick-grid">
+                    @for (character of rickCharacters; track character.id) {
+                        <article class="rick-card">
+                            <img [src]="character.image" [alt]="character.name">
+                            <div>
+                                <strong>{{ character.name }}</strong>
+                                <p>{{ character.species }} · {{ character.status }}</p>
+                            </div>
+                        </article>
+                    }
+                </div>
+            </div>
         </section>
 
 
