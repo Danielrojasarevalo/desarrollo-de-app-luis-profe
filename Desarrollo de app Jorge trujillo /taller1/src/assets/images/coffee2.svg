@@ -1,5 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="600" height="400" viewBox="0 0 600 400">
-  <rect width="600" height="400" rx="12" fill="#fff" stroke="#eee"/>
-  <rect x="200" y="80" width="200" height="200" fill="#c48b56" rx="8" />
-  <text x="300" y="310" font-family="Inter,Arial" font-size="20" text-anchor="middle" fill="#333">Oibas Coffee</text>
-</svg>
