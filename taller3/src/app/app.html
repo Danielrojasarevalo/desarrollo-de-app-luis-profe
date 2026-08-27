@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Cafés de Origen | Café Colombiano</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+
+    <!-- BARRA SUPERIOR -->
+    <div class="top-info">
+        <span>☕ Café colombiano de origen</span>
+        <span>📞 +57 315 425 5686</span>
+        <span>Envíos a todo Colombia</span>
+    </div>
+
+
+    <!-- HEADER -->
+    <header class="app-header">
+
+        <div class="header-container">
+
+            <a href="#home-hero" class="brand">
+
+                <div class="logo-icon">
+                    ☕
+                </div>
+
+                <div class="brand-content">
+                    <span class="brand-text">Cafés de Origen</span>
+                    <small>Del campo a tu taza</small>
+                </div>
+
+            </a>
+
+
+            <!-- BOTÓN MÓVIL -->
+            <button class="nav-toggle" type="button" aria-label="Abrir menú" (click)="toggleMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+
+
+            <!-- NAVEGACIÓN -->
+            <nav class="main-nav">
+
+                <a href="#home-hero" class="active">
+                    Inicio
+                </a>
+
+                <a href="#products">
+                    Cafés
+                </a>
+
+                <a href="#about">
+                    Nosotros
+                </a>
+
+                <a href="#contact">
+                    Contacto
+                </a>
+
+                <a href="#products" class="nav-button">
+                    Comprar café
+                </a>
+
+            </nav>
+
+        </div>
+
+    </header>
+
+
+    <!-- MENÚ MÓVIL -->
+    <div class="mobile-nav" [style.display]="menuOpen ? 'block' : 'none'">
+
+        <a href="#home-hero">Inicio</a>
+        <a href="#products">Cafés</a>
+        <a href="#about">Nosotros</a>
+        <a href="#contact">Contacto</a>
+
+        <a href="#products" class="mobile-button">
+            Comprar café
+        </a>
+
+    </div>
+
+
+    <main>
+
+
+        <!-- HERO -->
+        <section id="home-hero" class="hero">
+
+            <div class="hero-background"></div>
+
+            <div class="hero-content">
+
+                <span class="hero-tag">
+                    CAFÉ COLOMBIANO DE ORIGEN
+                </span>
+
+                <h1>
+                    El sabor de Colombia
+                    <br>
+                    <em>en cada taza.</em>
+                </h1>
+
+                <p>
+                    Descubre cafés especiales seleccionados directamente
+                    de productores colombianos.
+                </p>
+
+                <div class="hero-buttons">
+
+                    <a href="#products" class="cta">
+                        Explorar cafés
+                        <span>→</span>
+                    </a>
+
+                    <a href="#about" class="secondary-button">
+                        Conoce nuestra historia
+                    </a>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- BENEFICIOS -->
+        <section class="benefits">
+
+            <div class="benefit">
+
+                <div class="benefit-icon">
+                    🌱
+                </div>
+
+                <div>
+                    <strong>Café de origen</strong>
+                    <p>Seleccionado directamente de fincas colombianas.</p>
+                </div>
+
+            </div>
+
+
+            <div class="benefit">
+
+                <div class="benefit-icon">
+                    ☕
+                </div>
+
+                <div>
+                    <strong>Calidad especial</strong>
+                    <p>Granos cuidadosamente seleccionados y tostados.</p>
+                </div>
+
+            </div>
+
+
+            <div class="benefit">
+
+                <div class="benefit-icon">
+                    📦
+                </div>
+
+                <div>
+                    <strong>Envíos nacionales</strong>
+                    <p>Recibe tu café donde estés en Colombia.</p>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- PRODUCTOS -->
+        <section id="products" class="products-section">
+
+            <div class="section-heading">
+
+                <span class="section-label">
+                    NUESTRA SELECCIÓN
+                </span>
+
+                <h2>
+                    Cafés que cuentan
+                    <em>una historia.</em>
+                </h2>
+
+                <p>
+                    Conoce algunos de nuestros cafés especiales,
+                    seleccionados por su calidad, aroma y sabor.
+                </p>
+
+            </div>
+
+
+            <div class="products-grid">
+
+
+                <!-- PRODUCTO 1 -->
+                <article class="product">
+
+                    <div class="product-image">
+
+                        <span class="product-badge">
+                            DESTACADO
+                        </span>
+
+                        <img
+                            src="assets/images/WhatsApp Image 2026-08-11 at 12.06.06 PM.jpeg"
+                            alt="Café Montalto 360 gramos">
+
+                        <button class="favorite">
+                            ♡
+                        </button>
+
+                    </div>
+
+
+                    <div class="product-info">
+
+                        <span class="product-type">
+                            CAFÉ ESPECIAL
+                        </span>
+
+                        <h3>
+                            Café Montalto
+                        </h3>
+
+                        <p class="description">
+                            Café de origen colombiano con un perfil
+                            aromático y equilibrado.
+                        </p>
+
+                        <div class="product-bottom">
+
+                            <strong class="price">
+                                $54.500
+                            </strong>
+
+                            <button class="buy-button">
+                                Comprar →
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </article>
+
+
+                <!-- PRODUCTO 2 -->
+                <article class="product">
+
+                    <div class="product-image">
+
+                        <span class="product-badge">
+                            ESPECIAL
+                        </span>
+
+                        <img
+                            src="assets/images/WhatsApp Image 2026-08-11 at 12.06.10 PM.jpeg"
+                            alt="Oibas Coffee">
+
+                        <button class="favorite">
+                            ♡
+                        </button>
+
+                    </div>
+
+
+                    <div class="product-info">
+
+                        <span class="product-type">
+                            CAFÉ DE ORIGEN
+                        </span>
+
+                        <h3>
+                            Oibas Coffee
+                        </h3>
+
+                        <p class="description">
+                            Una selección de café colombiano con
+                            carácter y notas únicas.
+                        </p>
+
+                        <div class="product-bottom">
+
+                            <strong class="price">
+                                $50.000
+                            </strong>
+
+                            <button class="buy-button">
+                                Comprar →
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </article>
+
+
+                <!-- PRODUCTO 3 -->
+                <article class="product">
+
+                    <div class="product-image">
+
+                        <span class="product-badge">
+                            PREMIUM
+                        </span>
+
+                        <img
+                            src="assets/images/WhatsApp Image 2026-08-11 at 12.06.15 PM.jpeg"
+                            alt="Café Divisas 340 gramos">
+
+                        <button class="favorite">
+                            ♡
+                        </button>
+
+                    </div>
+
+
+                    <div class="product-info">
+
+                        <span class="product-type">
+                            CAFÉ PREMIUM
+                        </span>
+
+                        <h3>
+                            Café Divisas
+                        </h3>
+
+                        <p class="description">
+                            Granos seleccionados para quienes buscan
+                            una experiencia de café diferente.
+                        </p>
+
+                        <div class="product-bottom">
+
+                            <strong class="price">
+                                $78.500
+                            </strong>
+
+                            <button class="buy-button">
+                                Comprar →
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </article>
+
+            </div>
+
+
+            <div class="view-all">
+
+                <a href="#products">
+                    Ver todos nuestros cafés
+                    <span>→</span>
+                </a>
+
+            </div>
+
+        </section>
+
+        <!-- PRODUCTOS DE API -->
+        <section class="api-section" aria-labelledby="api-title">
+            <div class="section-heading">
+                <span class="section-label">EXPLORA EN TIEMPO REAL</span>
+                <h2 id="api-title">Recomendaciones de nuestra <em>API.</em></h2>
+                <p>Productos consultados desde un servicio externo para ampliar nuestra selección.</p>
+            </div>
+
+            @if (apiLoading) {
+                <p class="api-status">Consultando recomendaciones...</p>
+            } @else {
+                <div class="api-grid">
+                    @for (product of apiProducts; track product.id) {
+                        <article class="api-product">
+                            <img [src]="product.thumbnail" [alt]="product.title">
+                            <div>
+                                <span class="product-type">RECOMENDADO</span>
+                                <h3>{{ product.title }}</h3>
+                                <p>{{ product.description }}</p>
+                                <strong>${{ product.price | number: '1.2-2' }}</strong>
+                            </div>
+                        </article>
+                    }
+                </div>
+            }
+        </section>
+
+
+        <!-- NOSOTROS -->
+        <section id="about" class="about-section">
+
+            <div class="about-image">
+
+                <div class="about-image-overlay">
+
+                    <span>
+                        CAFÉ COLOMBIANO
+                    </span>
+
+                    <strong>
+                        De nuestra tierra
+                        <br>
+                        a tu taza.
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <div class="about-content">
+
+                <span class="section-label">
+                    NUESTRA HISTORIA
+                </span>
+
+                <h2>
+                    Más que café,
+                    <em>una conexión.</em>
+                </h2>
+
+                <p>
+                    En Cafés de Origen creemos que detrás de cada taza
+                    existe una historia. Trabajamos para conectar a los
+                    amantes del café con productores y fincas colombianas
+                    que ponen dedicación en cada grano.
+                </p>
+
+                <p>
+                    Seleccionamos cafés con identidad, calidad y
+                    trazabilidad para que puedas disfrutar en casa
+                    el verdadero sabor de Colombia.
+                </p>
+
+                <a href="#contact" class="about-button">
+                    Conoce más sobre nosotros →
+                </a>
+
+            </div>
+
+        </section>
+
+
+        <!-- FRASE -->
+        <section class="quote-section">
+
+            <div class="quote-content">
+
+                <span>☕</span>
+
+                <h2>
+                    "{{ apiQuote }}"
+                </h2>
+
+                <p>
+                    {{ apiQuoteAuthor }} · COLOMBIA
+                </p>
+
+            </div>
+
+        </section>
+
+
+        <!-- CONTACTO -->
+        <section id="contact" class="contact-section">
+
+            <div class="section-heading">
+
+                <span class="section-label">
+                    HABLEMOS
+                </span>
+
+                <h2>
+                    ¿Quieres disfrutar
+                    <em>un buen café?</em>
+                </h2>
+
+                <p>
+                    Estamos disponibles para atender tus pedidos
+                    y resolver cualquier pregunta.
+                </p>
+
+            </div>
+
+
+            <div class="contact-grid">
+
+                <div class="contact-card">
+
+                    <div class="contact-icon">
+                        📍
+                    </div>
+
+                    <h3>
+                        Visítanos
+                    </h3>
+
+                    <p>
+                        Cra. 43F # 14-60
+                        <br>
+                        Barrio Manila, El Poblado
+                        <br>
+                        Medellín, Antioquia
+                    </p>
+
+                </div>
+
+
+                <div class="contact-card">
+
+                    <div class="contact-icon">
+                        📞
+                    </div>
+
+                    <h3>
+                        Llámanos
+                    </h3>
+
+                    <p>
+                        +57 315 425 5686
+                        <br>
+                        +57 314 811 0615
+                    </p>
+
+                </div>
+
+
+                <div class="contact-card">
+
+                    <div class="contact-icon">
+                        ✉️
+                    </div>
+
+                    <h3>
+                        Escríbenos
+                    </h3>
+
+                    <p>
+                        info@cafesdeorigen.example
+                        <br>
+                        Respondemos lo más pronto posible.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- FOOTER -->
+    <footer class="site-footer">
+
+        <div class="footer-inner">
+
+
+            <div class="footer-brand">
+
+                <div class="footer-logo">
+                    ☕
+                </div>
+
+                <h3>
+                    Cafés de Origen
+                </h3>
+
+                <p>
+                    Directo de la finca a tu taza.
+                    Calidad, trazabilidad y pasión
+                    por el café colombiano.
+                </p>
+
+                <div class="social-icons">
+
+                    <a href="#" aria-label="Facebook">
+                        f
+                    </a>
+
+                    <a href="#" aria-label="Instagram">
+                        ◎
+                    </a>
+
+                    <a href="#" aria-label="LinkedIn">
+                        in
+                    </a>
+
+                </div>
+
+            </div>
+
+
+            <div class="footer-column">
+
+                <h4>
+                    Explora
+                </h4>
+
+                <a href="#home-hero">Inicio</a>
+                <a href="#products">Nuestros cafés</a>
+                <a href="#about">Nosotros</a>
+                <a href="#contact">Contacto</a>
+
+            </div>
+
+
+            <div class="footer-column">
+
+                <h4>
+                    Atención
+                </h4>
+
+                <a href="#">Preguntas frecuentes</a>
+                <a href="#">Envíos</a>
+                <a href="#">Métodos de pago</a>
+                <a href="#">Política de privacidad</a>
+
+            </div>
+
+
+            <div class="footer-column">
+
+                <h4>
+                    Horario
+                </h4>
+
+                <p>
+                    Lunes - Viernes
+                    <br>
+                    9:00 AM - 6:00 PM
+                </p>
+
+                <p>
+                    Sábados
+                    <br>
+                    9:00 AM - 2:00 PM
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="footer-bottom">
+
+            <p>
+                © 2026 Cafés de Origen.
+                Todos los derechos reservados.
+            </p>
+
+            <p>
+                Hecho con ☕ en Colombia
+            </p>
+
+        </div>
+
+    </footer>
+
+
+    <!-- BOTÓN VOLVER ARRIBA -->
+    <button id="back-to-top" class="back-to-top">
+        ↑
+    </button>
+
+
+    
+
+</body>
+
+</html>

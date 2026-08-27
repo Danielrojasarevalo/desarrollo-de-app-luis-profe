@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="600" viewBox="0 0 1600 600" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="g" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0%" stop-color="#2e7d32" stop-opacity="0.8"/>
+      <stop offset="100%" stop-color="#1b5e20" stop-opacity="0.8"/>
+    </linearGradient>
+  </defs>
+  <rect width="1600" height="600" fill="#4e342e" />
+  <g transform="translate(0,0)">
+    <rect width="1600" height="600" fill="url(#g)"/>
+  </g>
+  <g transform="translate(80,120)">
+    <text x="0" y="0" font-family="Playfair Display, serif" font-size="72" fill="#fff">Cafés de Origen</text>
+  </g>
+</svg>
