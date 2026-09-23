@@ -1,0 +1,118 @@
+<ion-content class="ion-padding">
+  <div class="page-wrap">
+    <ion-header class="app-header">
+      <ion-toolbar color="dark">
+        <ion-buttons slot="start">
+          <ion-button fill="clear" class="icon-button" aria-label="menu">
+            <ion-icon name="menu-outline"></ion-icon>
+          </ion-button>
+        </ion-buttons>
+        <ion-title>Calculadora</ion-title>
+        <ion-buttons slot="end">
+          <ion-button fill="clear" class="icon-button" aria-label="opciones">
+            <ion-icon name="ellipsis-vertical-outline"></ion-icon>
+          </ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-header>
+
+    <section class="info-panel intro-panel">
+      <div class="header-row">
+        <ion-chip color="primary">Daniel</ion-chip>
+        <ion-chip color="medium">Jorge Luis</ion-chip>
+      </div>
+      <p class="eyebrow">Mensajes explicativos de Ionic</p>
+      <h2>Explora cómo se usan los componentes principales.</h2>
+      <p class="lead">En esta pantalla se muestran ejemplos reales de ion-card, ion-button, ion-grid, ion-chip y ion-content dentro de una interfaz moderna.</p>
+      <ion-button class="download-button" expand="block" (click)="downloadApplication()">
+        <ion-icon slot="start" name="download-outline"></ion-icon>
+        Descargar aplicación
+      </ion-button>
+    </section>
+
+    <ion-list class="info-list" lines="full">
+      <ion-item>
+        <ion-label>
+          <h4>ion-card</h4>
+          <p>Sirve para agrupar contenido y dar un diseño más elegante a cada bloque visual.</p>
+        </ion-label>
+      </ion-item>
+      <ion-item>
+        <ion-label>
+          <h4>ion-button</h4>
+          <p>Permite crear acciones interactivas como números, operaciones y funciones especiales.</p>
+        </ion-label>
+      </ion-item>
+      <ion-item>
+        <ion-label>
+          <h4>ion-grid</h4>
+          <p>Organiza los botones en filas y columnas para lograr un teclado ordenado y responsive.</p>
+        </ion-label>
+      </ion-item>
+      <ion-item>
+        <ion-label>
+          <h4>ion-chip</h4>
+          <p>Se usa para resaltar nombres o etiquetas como Daniel y Jorge Luis.</p>
+        </ion-label>
+      </ion-item>
+    </ion-list>
+
+    <ion-card class="calculator-card">
+      <ion-card-header>
+        <ion-card-title>Calculadora</ion-card-title>
+        <ion-card-subtitle>Proyecto Ionic</ion-card-subtitle>
+      </ion-card-header>
+
+      <ion-card-content>
+        <div class="screen">
+          <div class="expression">{{ expression }}</div>
+          <div class="result">{{ display }}</div>
+        </div>
+
+        <ion-grid>
+          <ion-row>
+            <ion-col size="3"><ion-button class="key-btn light" expand="block" (click)="memoryClear()">MC</ion-button></ion-col>
+            <ion-col size="3"><ion-button class="key-btn light" expand="block" (click)="memorySave()">MS</ion-button></ion-col>
+            <ion-col size="3"><ion-button class="key-btn light" expand="block" (click)="memoryAdd()">M+</ion-button></ion-col>
+            <ion-col size="3"><ion-button class="key-btn accent" expand="block" (click)="deleteLast()">DEL</ion-button></ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col size="3"><ion-button class="key-btn dark" expand="block" (click)="clearAll()">C</ion-button></ion-col>
+            <ion-col size="3"><ion-button class="key-btn dark" expand="block" (click)="toggleSign()">±</ion-button></ion-col>
+            <ion-col size="3"><ion-button class="key-btn dark" expand="block" (click)="percentage()">%</ion-button></ion-col>
+            <ion-col size="3"><ion-button class="key-btn accent" expand="block" (click)="selectOperator('/')">÷</ion-button></ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col size="3"><ion-button class="key-btn" expand="block" (click)="appendDigit('7')">7</ion-button></ion-col>
+            <ion-col size="3"><ion-button class="key-btn" expand="block" (click)="appendDigit('8')">8</ion-button></ion-col>
+            <ion-col size="3"><ion-button class="key-btn" expand="block" (click)="appendDigit('9')">9</ion-button></ion-col>
+            <ion-col size="3"><ion-button class="key-btn accent" expand="block" (click)="selectOperator('*')">×</ion-button></ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col size="3"><ion-button class="key-btn" expand="block" (click)="appendDigit('4')">4</ion-button></ion-col>
+            <ion-col size="3"><ion-button class="key-btn" expand="block" (click)="appendDigit('5')">5</ion-button></ion-col>
+            <ion-col size="3"><ion-button class="key-btn" expand="block" (click)="appendDigit('6')">6</ion-button></ion-col>
+            <ion-col size="3"><ion-button class="key-btn accent" expand="block" (click)="selectOperator('-')">−</ion-button></ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col size="3"><ion-button class="key-btn" expand="block" (click)="appendDigit('1')">1</ion-button></ion-col>
+            <ion-col size="3"><ion-button class="key-btn" expand="block" (click)="appendDigit('2')">2</ion-button></ion-col>
+            <ion-col size="3"><ion-button class="key-btn" expand="block" (click)="appendDigit('3')">3</ion-button></ion-col>
+            <ion-col size="3"><ion-button class="key-btn accent" expand="block" (click)="selectOperator('+')">+</ion-button></ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col size="3"><ion-button class="key-btn dark" expand="block" (click)="squareRoot()">√</ion-button></ion-col>
+            <ion-col size="3"><ion-button class="key-btn dark" expand="block" (click)="square()">x²</ion-button></ion-col>
+            <ion-col size="3"><ion-button class="key-btn dark" expand="block" (click)="appendDecimal()">.</ion-button></ion-col>
+            <ion-col size="3"><ion-button class="key-btn accent equal" expand="block" (click)="equals()">=</ion-button></ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col size="6"><ion-button class="key-btn" expand="block" (click)="appendDigit('0')">0</ion-button></ion-col>
+            <ion-col size="3"><ion-button class="key-btn dark" expand="block" (click)="memoryRecall()">MR</ion-button></ion-col>
+            <ion-col size="3"><ion-button class="key-btn dark" expand="block" (click)="addPi()">π</ion-button></ion-col>
+          </ion-row>
+        </ion-grid>
+      </ion-card-content>
+    </ion-card>
+  </div>
+</ion-content>

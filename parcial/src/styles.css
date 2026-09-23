@@ -1,0 +1,3 @@
+/* Estilos generales y tipografia base de la aplicacion. */
+* { box-sizing: border-box; }
+body { margin: 0; background: #f7faf7; color: #203d32; font-family: Arial, sans-serif; }

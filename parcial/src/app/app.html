@@ -1,0 +1,106 @@
+<!-- Encabezado comun de todas las vistas. -->
+<header class="encabezado">
+  <button class="marca" (click)="seguirComprando()">MercaSimple</button>
+  <!-- El icono permite identificar el acceso al carrito rapidamente. -->
+  <button class="boton-carrito" aria-label="Abrir carrito" title="Abrir carrito" (click)="vista.set('carrito')">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 4h2l2.2 10.2a2 2 0 0 0 2 1.6h7.7a2 2 0 0 0 1.9-1.4L20.5 8H7"/><circle cx="10" cy="20" r="1.3"/><circle cx="18" cy="20" r="1.3"/></svg>
+    <span>{{ carrito().length }}</span>
+  </button>
+</header>
+
+<main>
+  @if (vista() === 'catalogo') {
+    <!-- Primera vista: catalogo con selector de categorias. -->
+    <section class="portada">
+      <p class="etiqueta">Compra facil, compra bien</p>
+      <h1>Encuentra lo que necesitas.</h1>
+      <p class="subtitulo">Productos utiles para todos los dias, en un solo lugar.</p>
+    </section>
+    <section class="catalogo">
+      <div class="barra-catalogo">
+        <h2>Productos</h2>
+        <label>Categoria:
+          <select [value]="categoria()" (change)="categoria.set($any($event.target).value)">
+            @for (opcion of categorias(); track opcion) { <option [value]="opcion">{{ nombreCategoria(opcion) }}</option> }
+          </select>
+        </label>
+      </div>
+      @if (cargando()) { <p class="mensaje">Cargando productos...</p> }
+      @else if (productosFiltrados().length === 0) { <p class="mensaje">No se encontraron productos.</p> }
+      @else {
+        <div class="productos">
+          @for (producto of productosFiltrados(); track producto.id) {
+            <article class="tarjeta-producto" (click)="verProducto(producto)">
+              <img [src]="producto.image" [alt]="producto.title" />
+              <p class="categoria">{{ nombreCategoria(producto.category) }}</p>
+              <h3>{{ producto.title }}</h3>
+              <strong>{{ producto.price | currency:'USD' }}</strong>
+              <button (click)="$event.stopPropagation(); agregarAlCarrito(producto)">Agregar</button>
+            </article>
+          }
+        </div>
+      }
+    </section>
+  }
+
+  @if (vista() === 'detalle' && productoSeleccionado(); as producto) {
+    <!-- Segunda vista: descripcion del producto elegido. -->
+    <section class="panel detalle">
+      <div class="acciones-vista"><button class="enlace" (click)="seguirComprando()">← Seguir comprando</button><button class="boton-cerrar" (click)="cerrarVista()">× Cerrar</button></div>
+      <div class="detalle-contenido">
+        <img [src]="producto.image" [alt]="producto.title" />
+        <div>
+          <p class="categoria">{{ nombreCategoria(producto.category) }}</p>
+          <h1>{{ producto.title }}</h1>
+          <p class="descripcion">{{ producto.description }}</p>
+          <strong class="precio">{{ producto.price | currency:'USD' }}</strong>
+          <button class="boton-principal" (click)="agregarAlCarrito(producto)">Agregar al carrito</button>
+        </div>
+      </div>
+    </section>
+  }
+
+  @if (vista() === 'carrito') {
+    <!-- Tercera vista: productos seleccionados y total de compra. -->
+    <section class="panel">
+      <div class="titulo-panel"><div><p class="etiqueta">Tu pedido</p><h1>Carrito</h1></div><div class="acciones-vista"><button class="enlace" (click)="seguirComprando()">Seguir comprando</button><button class="boton-cerrar" (click)="cerrarVista()">× Cerrar</button></div></div>
+      @if (carrito().length === 0) { <p class="mensaje">Tu carrito esta vacio.</p> }
+      @else {
+        <div class="lista-carrito">
+          @for (producto of carrito(); track $index) {
+            <article class="fila-carrito"><img [src]="producto.image" [alt]="producto.title" /><div><h3>{{ producto.title }}</h3><p>{{ producto.price | currency:'USD' }}</p></div><button class="quitar" (click)="quitarDelCarrito($index)">Quitar</button></article>
+          }
+        </div>
+        <div class="resumen"><span>Total</span><strong>{{ total() | currency:'USD' }}</strong></div>
+        <button class="boton-principal" (click)="vista.set('checkout')">Continuar a la compra</button>
+      }
+    </section>
+  }
+
+  @if (vista() === 'checkout') {
+    <!-- Cuarta vista: formulario de datos para finalizar la compra. -->
+    <section class="panel checkout">
+      <div class="acciones-vista"><button class="enlace" (click)="vista.set('carrito')">← Volver al carrito</button><button class="boton-cerrar" (click)="cerrarVista()">× Cerrar</button></div>
+      <p class="etiqueta">Ultimo paso</p><h1>Finalizar compra</h1>
+      <form (submit)="$event.preventDefault(); finalizarCompra()">
+        <label>Nombre completo<input required type="text" placeholder="Tu nombre" /></label>
+        <label>Direccion<input required type="text" placeholder="Calle y numero" /></label>
+        <label>Telefono<input required type="tel" placeholder="300 000 0000" /></label>
+        <label>Tarjeta de credito<input required type="text" maxlength="19" placeholder="0000 0000 0000 0000" /></label>
+        <button class="boton-principal" type="submit">Finalizar compra · {{ total() | currency:'USD' }}</button>
+      </form>
+    </section>
+  }
+</main>
+
+<!-- Pie con los datos de presentacion del parcial. -->
+<footer>
+  <div class="pie-contenido">
+    <strong>Parcial de Desarrollo de Aplicaciones</strong>
+    <div class="pie-datos">
+      <span>Jorge Luis Trujillo · Profesor</span>
+      <span>Daniel Rojas Arevalo · Estudiante</span>
+      <span>Universidad La FET · 6 semestre</span>
+    </div>
+  </div>
+</footer>
