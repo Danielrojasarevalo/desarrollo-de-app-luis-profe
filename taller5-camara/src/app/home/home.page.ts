@@ -2,7 +2,7 @@ import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { CameraDirection } from '@capacitor/camera';
 import { Capacitor } from '@capacitor/core';
 import { ActionSheetController, AlertController, ToastController } from '@ionic/angular/lazy';
-import { PermissionDeniedError, PhotoCancelledError, PhotoService } from './photo.service';
+import { PermissionDeniedError, PhotoCancelledError, PhotoQuality, PhotoService, QUALITY_VALUES } from './photo.service';
 import { UserPhoto } from './user-photo.model';
 
 type Filter = 'todas' | 'favoritas';
@@ -46,12 +46,59 @@ export class HomePage implements OnInit {
   }
 
   async takePhoto(): Promise<void> {
+    if (!(await this.askPermission('camera'))) {
+      return;
+    }
     const direction = this.useFrontCamera() ? CameraDirection.Front : CameraDirection.Rear;
     await this.run(() => this.photoService.takePhoto(direction), 'Foto guardada en tu galeria');
   }
 
   async chooseFromGallery(): Promise<void> {
+    if (!(await this.askPermission('photos'))) {
+      return;
+    }
     await this.run(() => this.photoService.chooseFromGallery(), 'Fotos importadas');
+  }
+
+  // Pregunta SIEMPRE antes de usar la camara o la galeria; si el usuario no acepta, no se abre nada.
+  private async askPermission(permission: 'camera' | 'photos'): Promise<boolean> {
+    const alert = await this.alertCtrl.create({
+      header: permission === 'camera' ? 'Usar la camara' : 'Abrir la galeria',
+      message: permission === 'camera'
+        ? '¿Permites que Lente use la camara para tomar una foto?'
+        : '¿Permites que Lente acceda a tus fotos para importarlas?',
+      buttons: [
+        { text: 'No permitir', role: 'cancel' },
+        { text: 'Permitir', role: 'confirm' },
+      ],
+    });
+    await alert.present();
+    // onDidDismiss espera a que el usuario toque un boton y devuelve su "role".
+    const { role } = await alert.onDidDismiss();
+    if (role !== 'confirm') {
+      await this.showToast('Sin permiso no se puede continuar', 'warning', 'alert-circle');
+      return false;
+    }
+    return true;
+  }
+
+  // Opciones del selector de calidad: la clave, el texto y el porcentaje real que se usa.
+  readonly qualityOptions = (['baja', 'media', 'alta'] as PhotoQuality[]).map((value) => ({
+    value,
+    label: value[0].toUpperCase() + value.slice(1),
+    percent: QUALITY_VALUES[value],
+  }));
+
+  async setQuality(value: unknown): Promise<void> {
+    if (value !== 'baja' && value !== 'media' && value !== 'alta') {
+      return;
+    }
+    try {
+      await this.photoService.setQuality(value);
+      await this.showToast(`Calidad ${value}: ${QUALITY_VALUES[value]}%`, 'primary', 'options-outline');
+    } catch (error) {
+      await this.showError('No se pudo guardar la calidad', error);
+    }
   }
 
   setFilter(value: unknown): void {

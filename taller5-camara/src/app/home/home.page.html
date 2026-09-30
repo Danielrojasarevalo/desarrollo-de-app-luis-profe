@@ -49,6 +49,22 @@
     </div>
   </div>
 
+  <!-- Selector de calidad: define el porcentaje JPEG con el que se guardan las fotos -->
+  <div class="quality">
+    <div class="quality__title">
+      <ion-icon name="options-outline"></ion-icon>
+      <span>Calidad</span>
+      <small>{{ photoService.quality() === 'alta' ? 'Maxima nitidez' : photoService.quality() === 'media' ? 'Equilibrada' : 'Ocupa menos espacio' }}</small>
+    </div>
+    <ion-segment [value]="photoService.quality()" (ionChange)="setQuality($event.detail.value)" mode="ios">
+      @for (option of qualityOptions; track option.value) {
+        <ion-segment-button [value]="option.value">
+          <ion-label>{{ option.label }} <span class="quality__pct">{{ option.percent }}%</span></ion-label>
+        </ion-segment-button>
+      }
+    </ion-segment>
+  </div>
+
   <div class="gallery-header">
     <h2>Galeria</h2>
     <ion-segment [value]="filter()" (ionChange)="setFilter($event.detail.value)" mode="ios">

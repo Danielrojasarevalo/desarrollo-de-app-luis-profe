@@ -6,6 +6,11 @@ import { Preferences } from '@capacitor/preferences';
 import { Platform } from '@ionic/angular/lazy';
 import { UserPhoto } from './user-photo.model';
 
+export type PhotoQuality = 'baja' | 'media' | 'alta';
+
+// Porcentaje de calidad JPEG (0-100) que se envia al plugin de camara segun el modo elegido.
+export const QUALITY_VALUES: Record<PhotoQuality, number> = { baja: 50, media: 75, alta: 100 };
+
 // Errores propios para que la pagina muestre un mensaje distinto segun lo que paso.
 export class PhotoCancelledError extends Error {
   constructor() {
@@ -23,12 +28,22 @@ export class PermissionDeniedError extends Error {
 @Injectable({ providedIn: 'root' })
 export class PhotoService {
   private readonly PHOTO_STORAGE = 'photos';
+  private readonly QUALITY_STORAGE = 'quality';
   private readonly platform = inject(Platform);
 
   // Estado reactivo: solo el servicio escribe en _photos; los demas leen photos() y se actualizan solos.
   private readonly _photos = signal<UserPhoto[]>([]);
   readonly photos = this._photos.asReadonly();
   readonly favorites = computed(() => this._photos().filter((photo) => photo.favorite));
+
+  // Modo de calidad elegido por el usuario; se guarda para recordarlo al volver a abrir la app.
+  private readonly _quality = signal<PhotoQuality>('alta');
+  readonly quality = this._quality.asReadonly();
+
+  async setQuality(quality: PhotoQuality): Promise<void> {
+    this._quality.set(quality);
+    await Preferences.set({ key: this.QUALITY_STORAGE, value: quality });
+  }
 
   async takePhoto(direction: CameraDirection = CameraDirection.Rear): Promise<UserPhoto> {
     await this.ensurePermission('camera');
@@ -37,7 +52,7 @@ export class PhotoService {
       resultType: CameraResultType.Uri,
       source: CameraSource.Camera,
       direction,
-      quality: 90,
+      quality: QUALITY_VALUES[this._quality()],
       allowEditing: false,
       correctOrientation: true,
     }));
@@ -46,7 +61,10 @@ export class PhotoService {
 
   async chooseFromGallery(): Promise<UserPhoto[]> {
     await this.ensurePermission('photos');
-    const { results } = await this.capture(() => Camera.chooseFromGallery({ allowMultipleSelection: true, quality: 90 }));
+    const { results } = await this.capture(() => Camera.chooseFromGallery({
+      allowMultipleSelection: true,
+      quality: QUALITY_VALUES[this._quality()],
+    }));
     if (!results.length) {
       throw new PhotoCancelledError();
     }
@@ -58,6 +76,11 @@ export class PhotoService {
   }
 
   async loadSaved(): Promise<void> {
+    const savedQuality = (await Preferences.get({ key: this.QUALITY_STORAGE })).value;
+    if (savedQuality === 'baja' || savedQuality === 'media' || savedQuality === 'alta') {
+      this._quality.set(savedQuality);
+    }
+
     const { value } = await Preferences.get({ key: this.PHOTO_STORAGE });
     const photos = (value ? JSON.parse(value) : []) as UserPhoto[];
 
