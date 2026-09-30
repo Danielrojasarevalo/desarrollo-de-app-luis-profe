@@ -45,7 +45,7 @@ ion-content {
   border-radius: 24px;
   overflow: hidden;
   background: radial-gradient(circle at 30% 20%, #2b3346, #11141b 70%) center / cover no-repeat;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.45);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.45), inset 0 0 0 1px rgba(255, 255, 255, 0.06);
 
   &__shade {
     position: absolute;
@@ -100,6 +100,9 @@ ion-content {
 }
 
 .mode {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
   padding: 2px 10px;
   border-radius: 999px;
   background: rgba(255, 204, 51, 0.2);
@@ -119,6 +122,20 @@ ion-content {
   &.br { bottom: 90px; right: 22px; border-bottom-width: 2px; border-right-width: 2px; }
 }
 
+// Recuadro de enfoque en el centro del visor, como en la app de camara.
+.focus {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 56px;
+  height: 56px;
+  margin: -44px 0 0 -28px;
+  border: 1.5px solid var(--accent);
+  border-radius: 8px;
+  opacity: 0.8;
+  animation: focus 2.4s ease-in-out infinite;
+}
+
 /* ---------- Estadisticas ---------- */
 .stats {
   display: grid;
@@ -134,7 +151,8 @@ ion-content {
   gap: 2px;
   padding: 14px 8px;
   border-radius: 18px;
-  background: var(--surface);
+  background: linear-gradient(160deg, var(--surface-2), var(--surface));
+  border: 1px solid rgba(255, 255, 255, 0.05);
 
   strong,
   ion-icon {
@@ -179,7 +197,7 @@ ion-content {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(105px, 1fr));
   gap: 6px;
-  padding: 0 16px 24px;
+  padding: 0 16px 130px;
 }
 
 .tile {
@@ -211,6 +229,25 @@ ion-content {
     filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.6));
   }
 
+  &--skeleton {
+    animation: none;
+
+    ion-skeleton-text {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      --background: var(--surface-2);
+    }
+  }
+
+  &__missing {
+    display: grid;
+    place-items: center;
+    height: 100%;
+    font-size: 28px;
+    color: var(--muted);
+  }
+
   &__more {
     position: absolute;
     top: 2px;
@@ -225,7 +262,7 @@ ion-content {
 
 .empty {
   text-align: center;
-  padding: 32px 32px 48px;
+  padding: 32px 32px 140px;
   color: var(--muted);
 
   &__icon {
@@ -252,60 +289,58 @@ ion-content {
   }
 }
 
-/* ---------- Barra del obturador ---------- */
-.shutter-bar {
-  display: flex;
-  align-items: center;
-  justify-content: space-around;
-  padding: 14px 24px calc(14px + var(--ion-safe-area-bottom, 0px));
-  background: rgba(13, 15, 20, 0.92);
-  border-top: 1px solid var(--surface-2);
-  backdrop-filter: blur(12px);
+/* ---------- Botones flotantes (ion-fab) ---------- */
+// Franja con desenfoque detras de los botones para que se lean sobre cualquier foto.
+.fab-dock {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: calc(104px + var(--ion-safe-area-bottom, 0px));
+  background: linear-gradient(180deg, transparent, rgba(13, 15, 20, 0.9) 45%);
+  pointer-events: none;
 }
 
-.round-btn {
-  width: 52px;
-  height: 52px;
-  --border-radius: 50%;
-  --background: var(--surface-2);
-  --color: var(--text);
-  transition: transform 0.2s ease;
+.fab-side {
+  margin: 0 22px calc(18px + var(--ion-safe-area-bottom, 0px));
 
-  &.active {
-    --color: var(--accent);
-    transform: rotate(180deg);
+  ion-fab-button {
+    --background: var(--surface-2);
+    --background-activated: var(--surface);
+    --color: var(--text);
+    --box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+    transition: transform 0.25s ease;
+
+    &.active {
+      --color: var(--accent);
+      transform: rotate(180deg);
+    }
   }
 }
 
-.shutter {
-  display: grid;
-  place-items: center;
-  width: 78px;
-  height: 78px;
-  padding: 0;
-  border: 4px solid var(--text);
-  border-radius: 50%;
-  background: transparent;
-  cursor: pointer;
+.fab-shutter {
+  margin-bottom: calc(10px + var(--ion-safe-area-bottom, 0px));
 
-  &__inner {
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    background: var(--accent);
+  ion-fab-button {
+    width: 72px;
+    height: 72px;
+    --background: var(--accent);
+    --background-activated: #e6b82e;
+    --color: #111;
+    --box-shadow: 0 0 0 5px var(--bg), 0 0 0 8px var(--text), 0 12px 28px rgba(255, 204, 51, 0.35);
     transition: transform 0.15s ease;
-  }
 
-  &:active .shutter__inner {
-    transform: scale(0.85);
-  }
+    ion-icon {
+      font-size: 30px;
+    }
 
-  &:disabled {
-    opacity: 0.6;
+    &:active {
+      transform: scale(0.92);
+    }
   }
 
   ion-spinner {
-    color: var(--accent);
+    color: #111;
   }
 }
 
@@ -341,6 +376,11 @@ ion-content {
 
 @keyframes blink {
   50% { opacity: 0.2; }
+}
+
+@keyframes focus {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(0.85); }
 }
 
 @keyframes pop {
