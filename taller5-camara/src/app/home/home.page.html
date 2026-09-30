@@ -1,0 +1,133 @@
+<ion-header [translucent]="true" class="ion-no-border">
+  <ion-toolbar>
+    <ion-title>
+      <span class="brand"><ion-icon name="aperture"></ion-icon> Lente</span>
+    </ion-title>
+    <ion-buttons slot="end">
+      <ion-chip class="count-chip">
+        <ion-icon name="images-outline"></ion-icon>
+        <ion-label>{{ photoService.photos.length }}</ion-label>
+      </ion-chip>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <!-- Visor: muestra la ultima foto tomada como si fuera la pantalla de la camara -->
+  <section class="viewfinder" [style.background-image]="lastPhoto?.webviewPath ? 'url(' + lastPhoto?.webviewPath + ')' : null">
+    <div class="viewfinder__shade"></div>
+    <span class="corner tl"></span><span class="corner tr"></span>
+    <span class="corner bl"></span><span class="corner br"></span>
+
+    <div class="viewfinder__top">
+      <span class="rec"><span class="rec__dot"></span>LIVE</span>
+      <span class="mode">{{ useFrontCamera ? 'Frontal' : 'Trasera' }}</span>
+    </div>
+
+    <div class="viewfinder__body">
+      <h1>{{ lastPhoto ? 'Tu ultima captura' : 'Captura el momento' }}</h1>
+      <p>{{ lastPhoto ? (lastPhoto.createdAt | date: 'd MMM y, h:mm a') : 'Toca el obturador para tomar tu primera foto' }}</p>
+    </div>
+  </section>
+
+  <div class="stats">
+    <div class="stat">
+      <strong>{{ photoService.photos.length }}</strong>
+      <span>Fotos</span>
+    </div>
+    <div class="stat">
+      <strong>{{ favoritesCount }}</strong>
+      <span>Favoritas</span>
+    </div>
+    <div class="stat">
+      <ion-icon [name]="useFrontCamera ? 'person-circle-outline' : 'camera-outline'"></ion-icon>
+      <span>{{ useFrontCamera ? 'Selfie' : 'Normal' }}</span>
+    </div>
+  </div>
+
+  <div class="gallery-header">
+    <h2>Galeria</h2>
+    <ion-segment [(ngModel)]="filter" mode="ios">
+      <ion-segment-button value="todas"><ion-label>Todas</ion-label></ion-segment-button>
+      <ion-segment-button value="favoritas"><ion-label>Favoritas</ion-label></ion-segment-button>
+    </ion-segment>
+  </div>
+
+  @if (visiblePhotos.length) {
+    <div class="grid">
+      @for (photo of visiblePhotos; track photo.filepath) {
+        <div class="tile" (click)="openPhoto(photo)">
+          <ion-img [src]="photo.webviewPath" alt="Foto"></ion-img>
+          @if (photo.favorite) {
+            <ion-icon class="tile__fav" name="heart"></ion-icon>
+          }
+          <ion-button class="tile__more" fill="clear" size="small" (click)="$event.stopPropagation(); showActions(photo)">
+            <ion-icon slot="icon-only" name="ellipsis-horizontal"></ion-icon>
+          </ion-button>
+        </div>
+      }
+    </div>
+  } @else {
+    <div class="empty">
+      <div class="empty__icon"><ion-icon [name]="filter === 'favoritas' ? 'heart-outline' : 'camera-outline'"></ion-icon></div>
+      <h3>{{ filter === 'favoritas' ? 'Sin favoritas aun' : 'Tu galeria esta vacia' }}</h3>
+      <p>{{ filter === 'favoritas' ? 'Marca fotos con el corazon para verlas aqui.' : 'Las fotos que tomes o importes apareceran aqui.' }}</p>
+    </div>
+  }
+</ion-content>
+
+<!-- Barra inferior estilo app de camara -->
+<ion-footer class="ion-no-border">
+  <div class="shutter-bar">
+    <ion-button class="round-btn" fill="clear" (click)="chooseFromGallery()" [disabled]="isBusy" aria-label="Abrir galeria">
+      <ion-icon slot="icon-only" name="images"></ion-icon>
+    </ion-button>
+
+    <button class="shutter" (click)="takePhoto()" [disabled]="isBusy" aria-label="Tomar foto">
+      @if (isBusy) {
+        <ion-spinner name="crescent"></ion-spinner>
+      } @else {
+        <span class="shutter__inner"></span>
+      }
+    </button>
+
+    <ion-button class="round-btn" fill="clear" (click)="toggleCamera()" [class.active]="useFrontCamera" aria-label="Cambiar camara">
+      <ion-icon slot="icon-only" name="camera-reverse"></ion-icon>
+    </ion-button>
+  </div>
+</ion-footer>
+
+<!-- Visor de foto a pantalla completa -->
+<ion-modal [isOpen]="!!selectedPhoto" (didDismiss)="closePhoto()" class="viewer">
+  <ng-template>
+    <ion-header class="ion-no-border">
+      <ion-toolbar>
+        <ion-buttons slot="start">
+          <ion-button (click)="closePhoto()"><ion-icon slot="icon-only" name="close"></ion-icon></ion-button>
+        </ion-buttons>
+        <ion-title>{{ selectedPhoto?.createdAt | date: 'd MMM y' }}</ion-title>
+      </ion-toolbar>
+    </ion-header>
+    <ion-content class="viewer__content">
+      @if (selectedPhoto) {
+        <img [src]="selectedPhoto.webviewPath" alt="Foto seleccionada" />
+      }
+    </ion-content>
+    <ion-footer class="ion-no-border">
+      <ion-toolbar>
+        @if (selectedPhoto) {
+          <div class="viewer__actions">
+            <ion-button fill="clear" (click)="toggleFavorite(selectedPhoto)">
+              <ion-icon slot="start" [name]="selectedPhoto.favorite ? 'heart' : 'heart-outline'" [color]="selectedPhoto.favorite ? 'danger' : undefined"></ion-icon>
+              {{ selectedPhoto.favorite ? 'Favorita' : 'Me gusta' }}
+            </ion-button>
+            <ion-button fill="clear" color="danger" (click)="deletePhoto(selectedPhoto)">
+              <ion-icon slot="start" name="trash-outline"></ion-icon>
+              Eliminar
+            </ion-button>
+          </div>
+        }
+      </ion-toolbar>
+    </ion-footer>
+  </ng-template>
+</ion-modal>

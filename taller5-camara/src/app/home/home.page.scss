@@ -1,0 +1,349 @@
+:host {
+  --accent: #ffcc33;
+  --bg: #0d0f14;
+  --surface: #171a22;
+  --surface-2: #20242f;
+  --text: #f4f5f7;
+  --muted: #8b91a1;
+}
+
+ion-header ion-toolbar {
+  --background: rgba(13, 15, 20, 0.85);
+  --color: var(--text);
+  backdrop-filter: blur(12px);
+}
+
+ion-content {
+  --background: var(--bg);
+  --color: var(--text);
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+
+  ion-icon {
+    color: var(--accent);
+    font-size: 22px;
+  }
+}
+
+.count-chip {
+  --background: var(--surface-2);
+  --color: var(--text);
+  font-weight: 600;
+}
+
+/* ---------- Visor ---------- */
+.viewfinder {
+  position: relative;
+  margin: 16px;
+  height: 260px;
+  border-radius: 24px;
+  overflow: hidden;
+  background: radial-gradient(circle at 30% 20%, #2b3346, #11141b 70%) center / cover no-repeat;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.45);
+
+  &__shade {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0.35), transparent 40%, rgba(0, 0, 0, 0.75));
+  }
+
+  &__top {
+    position: absolute;
+    top: 18px;
+    left: 22px;
+    right: 22px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1px;
+  }
+
+  &__body {
+    position: absolute;
+    left: 22px;
+    right: 22px;
+    bottom: 22px;
+
+    h1 {
+      margin: 0 0 4px;
+      font-size: 24px;
+      font-weight: 800;
+    }
+
+    p {
+      margin: 0;
+      color: rgba(255, 255, 255, 0.75);
+      font-size: 14px;
+    }
+  }
+}
+
+.rec {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
+  &__dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #ff4d4d;
+    animation: blink 1.4s infinite;
+  }
+}
+
+.mode {
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: rgba(255, 204, 51, 0.2);
+  color: var(--accent);
+}
+
+.corner {
+  position: absolute;
+  width: 26px;
+  height: 26px;
+  border: 0 solid rgba(255, 255, 255, 0.7);
+  z-index: 1;
+
+  &.tl { top: 48px; left: 22px; border-top-width: 2px; border-left-width: 2px; }
+  &.tr { top: 48px; right: 22px; border-top-width: 2px; border-right-width: 2px; }
+  &.bl { bottom: 90px; left: 22px; border-bottom-width: 2px; border-left-width: 2px; }
+  &.br { bottom: 90px; right: 22px; border-bottom-width: 2px; border-right-width: 2px; }
+}
+
+/* ---------- Estadisticas ---------- */
+.stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin: 0 16px 20px;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 14px 8px;
+  border-radius: 18px;
+  background: var(--surface);
+
+  strong,
+  ion-icon {
+    font-size: 22px;
+    color: var(--accent);
+  }
+
+  span {
+    font-size: 12px;
+    color: var(--muted);
+  }
+}
+
+/* ---------- Galeria ---------- */
+.gallery-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 0 16px 12px;
+
+  h2 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 800;
+  }
+
+  ion-segment {
+    max-width: 200px;
+    --background: var(--surface);
+  }
+
+  ion-segment-button {
+    --indicator-color: var(--accent);
+    --color: var(--muted);
+    --color-checked: #111;
+    font-weight: 600;
+  }
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(105px, 1fr));
+  gap: 6px;
+  padding: 0 16px 24px;
+}
+
+.tile {
+  position: relative;
+  aspect-ratio: 1;
+  border-radius: 14px;
+  overflow: hidden;
+  background: var(--surface);
+  cursor: pointer;
+  animation: pop 0.3s ease;
+
+  ion-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+  }
+
+  &:hover ion-img {
+    transform: scale(1.06);
+  }
+
+  &__fav {
+    position: absolute;
+    left: 8px;
+    bottom: 8px;
+    color: #ff4d6d;
+    font-size: 18px;
+    filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.6));
+  }
+
+  &__more {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    --color: #fff;
+    --background: rgba(0, 0, 0, 0.35);
+    --border-radius: 50%;
+    --padding-start: 6px;
+    --padding-end: 6px;
+  }
+}
+
+.empty {
+  text-align: center;
+  padding: 32px 32px 48px;
+  color: var(--muted);
+
+  &__icon {
+    display: grid;
+    place-items: center;
+    width: 76px;
+    height: 76px;
+    margin: 0 auto 14px;
+    border-radius: 50%;
+    background: var(--surface);
+    font-size: 34px;
+    color: var(--accent);
+  }
+
+  h3 {
+    margin: 0 0 6px;
+    color: var(--text);
+    font-weight: 700;
+  }
+
+  p {
+    margin: 0;
+    font-size: 14px;
+  }
+}
+
+/* ---------- Barra del obturador ---------- */
+.shutter-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding: 14px 24px calc(14px + var(--ion-safe-area-bottom, 0px));
+  background: rgba(13, 15, 20, 0.92);
+  border-top: 1px solid var(--surface-2);
+  backdrop-filter: blur(12px);
+}
+
+.round-btn {
+  width: 52px;
+  height: 52px;
+  --border-radius: 50%;
+  --background: var(--surface-2);
+  --color: var(--text);
+  transition: transform 0.2s ease;
+
+  &.active {
+    --color: var(--accent);
+    transform: rotate(180deg);
+  }
+}
+
+.shutter {
+  display: grid;
+  place-items: center;
+  width: 78px;
+  height: 78px;
+  padding: 0;
+  border: 4px solid var(--text);
+  border-radius: 50%;
+  background: transparent;
+  cursor: pointer;
+
+  &__inner {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: var(--accent);
+    transition: transform 0.15s ease;
+  }
+
+  &:active .shutter__inner {
+    transform: scale(0.85);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+  }
+
+  ion-spinner {
+    color: var(--accent);
+  }
+}
+
+/* ---------- Visor modal ---------- */
+.viewer {
+  --background: #000;
+
+  ion-toolbar {
+    --background: #000;
+    --color: #fff;
+  }
+
+  &__content {
+    --background: #000;
+
+    img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+  }
+
+  &__actions {
+    display: flex;
+    justify-content: space-around;
+
+    ion-button {
+      --color: #fff;
+    }
+  }
+}
+
+@keyframes blink {
+  50% { opacity: 0.2; }
+}
+
+@keyframes pop {
+  from { opacity: 0; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1); }
+}

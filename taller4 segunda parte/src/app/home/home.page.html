@@ -1,118 +1,70 @@
-<ion-content class="ion-padding">
-  <div class="page-wrap">
-    <ion-header class="app-header">
-      <ion-toolbar color="dark">
-        <ion-buttons slot="start">
-          <ion-button fill="clear" class="icon-button" aria-label="menu">
-            <ion-icon name="menu-outline"></ion-icon>
-          </ion-button>
-        </ion-buttons>
-        <ion-title>Calculadora</ion-title>
-        <ion-buttons slot="end">
-          <ion-button fill="clear" class="icon-button" aria-label="opciones">
-            <ion-icon name="ellipsis-vertical-outline"></ion-icon>
-          </ion-button>
-        </ion-buttons>
-      </ion-toolbar>
-    </ion-header>
+<ion-header class="topbar">
+  <ion-toolbar>
+    <ion-title><strong>Pokédex</strong><span> REGIÓN KANTO</span></ion-title>
+    <ion-button slot="end" class="new-button" (click)="openCreate()">+ Nuevo</ion-button>
+  </ion-toolbar>
+</ion-header>
 
-    <section class="info-panel intro-panel">
-      <div class="header-row">
-        <ion-chip color="primary">Daniel</ion-chip>
-        <ion-chip color="medium">Jorge Luis</ion-chip>
+<ion-content>
+  <main class="page-wrap">
+    <section class="hero">
+      <div>
+        <p class="eyebrow">Explorador de especies</p>
+        <h1>Encuentra tu próximo <em>favorito.</em></h1>
+        <p>Consulta, crea y modifica registros de Pokémon desde una interfaz clara y lista para conectar con una API real.</p>
       </div>
-      <p class="eyebrow">Mensajes explicativos de Ionic</p>
-      <h2>Explora cómo se usan los componentes principales.</h2>
-      <p class="lead">En esta pantalla se muestran ejemplos reales de ion-card, ion-button, ion-grid, ion-chip y ion-content dentro de una interfaz moderna.</p>
-      <ion-button class="download-button" expand="block" (click)="downloadApplication()">
-        <ion-icon slot="start" name="download-outline"></ion-icon>
-        Descargar aplicación
-      </ion-button>
+      <div class="hero-mark">#<span>151</span></div>
     </section>
 
-    <ion-list class="info-list" lines="full">
-      <ion-item>
-        <ion-label>
-          <h4>ion-card</h4>
-          <p>Sirve para agrupar contenido y dar un diseño más elegante a cada bloque visual.</p>
-        </ion-label>
-      </ion-item>
-      <ion-item>
-        <ion-label>
-          <h4>ion-button</h4>
-          <p>Permite crear acciones interactivas como números, operaciones y funciones especiales.</p>
-        </ion-label>
-      </ion-item>
-      <ion-item>
-        <ion-label>
-          <h4>ion-grid</h4>
-          <p>Organiza los botones en filas y columnas para lograr un teclado ordenado y responsive.</p>
-        </ion-label>
-      </ion-item>
-      <ion-item>
-        <ion-label>
-          <h4>ion-chip</h4>
-          <p>Se usa para resaltar nombres o etiquetas como Daniel y Jorge Luis.</p>
-        </ion-label>
-      </ion-item>
-    </ion-list>
+    <section class="search-row" aria-label="Buscar Pokémon">
+      <ion-searchbar [(ngModel)]="searchTerm" (ionInput)="filterPokemons()" placeholder="Buscar por nombre, tipo o número" [debounce]="0"></ion-searchbar>
+      <ion-button fill="outline" (click)="openCreate()">Agregar registro</ion-button>
+    </section>
 
-    <ion-card class="calculator-card">
-      <ion-card-header>
-        <ion-card-title>Calculadora</ion-card-title>
-        <ion-card-subtitle>Proyecto Ionic</ion-card-subtitle>
-      </ion-card-header>
+    <p class="feedback" *ngIf="feedback">{{ feedback }}</p>
 
-      <ion-card-content>
-        <div class="screen">
-          <div class="expression">{{ expression }}</div>
-          <div class="result">{{ display }}</div>
+    <div class="workspace">
+      <section class="catalog">
+        <div class="section-heading">
+          <div><p class="eyebrow">Catálogo</p><h2>{{ filteredPokemons.length }} resultados</h2></div>
+          <span class="api-status"><i></i> API mock activa</span>
         </div>
+        <div class="pokemon-grid">
+          <button class="pokemon-tile" *ngFor="let pokemon of filteredPokemons" [class.active]="selectedPokemon?.id === pokemon.id" (click)="selectPokemon(pokemon)">
+            <span class="tile-number">#{{ pokemon.id.toString().padStart(3, '0') }}</span>
+            <img [src]="pokemon.image" [alt]="pokemon.name">
+            <strong>{{ pokemon.name }}</strong>
+            <span class="type-pill" [class]="'type-' + pokemon.type.toLowerCase()">{{ pokemon.type }}</span>
+          </button>
+        </div>
+        <p class="empty-state" *ngIf="!filteredPokemons.length">No hay resultados para esta búsqueda.</p>
+      </section>
 
-        <ion-grid>
-          <ion-row>
-            <ion-col size="3"><ion-button class="key-btn light" expand="block" (click)="memoryClear()">MC</ion-button></ion-col>
-            <ion-col size="3"><ion-button class="key-btn light" expand="block" (click)="memorySave()">MS</ion-button></ion-col>
-            <ion-col size="3"><ion-button class="key-btn light" expand="block" (click)="memoryAdd()">M+</ion-button></ion-col>
-            <ion-col size="3"><ion-button class="key-btn accent" expand="block" (click)="deleteLast()">DEL</ion-button></ion-col>
-          </ion-row>
-          <ion-row>
-            <ion-col size="3"><ion-button class="key-btn dark" expand="block" (click)="clearAll()">C</ion-button></ion-col>
-            <ion-col size="3"><ion-button class="key-btn dark" expand="block" (click)="toggleSign()">±</ion-button></ion-col>
-            <ion-col size="3"><ion-button class="key-btn dark" expand="block" (click)="percentage()">%</ion-button></ion-col>
-            <ion-col size="3"><ion-button class="key-btn accent" expand="block" (click)="selectOperator('/')">÷</ion-button></ion-col>
-          </ion-row>
-          <ion-row>
-            <ion-col size="3"><ion-button class="key-btn" expand="block" (click)="appendDigit('7')">7</ion-button></ion-col>
-            <ion-col size="3"><ion-button class="key-btn" expand="block" (click)="appendDigit('8')">8</ion-button></ion-col>
-            <ion-col size="3"><ion-button class="key-btn" expand="block" (click)="appendDigit('9')">9</ion-button></ion-col>
-            <ion-col size="3"><ion-button class="key-btn accent" expand="block" (click)="selectOperator('*')">×</ion-button></ion-col>
-          </ion-row>
-          <ion-row>
-            <ion-col size="3"><ion-button class="key-btn" expand="block" (click)="appendDigit('4')">4</ion-button></ion-col>
-            <ion-col size="3"><ion-button class="key-btn" expand="block" (click)="appendDigit('5')">5</ion-button></ion-col>
-            <ion-col size="3"><ion-button class="key-btn" expand="block" (click)="appendDigit('6')">6</ion-button></ion-col>
-            <ion-col size="3"><ion-button class="key-btn accent" expand="block" (click)="selectOperator('-')">−</ion-button></ion-col>
-          </ion-row>
-          <ion-row>
-            <ion-col size="3"><ion-button class="key-btn" expand="block" (click)="appendDigit('1')">1</ion-button></ion-col>
-            <ion-col size="3"><ion-button class="key-btn" expand="block" (click)="appendDigit('2')">2</ion-button></ion-col>
-            <ion-col size="3"><ion-button class="key-btn" expand="block" (click)="appendDigit('3')">3</ion-button></ion-col>
-            <ion-col size="3"><ion-button class="key-btn accent" expand="block" (click)="selectOperator('+')">+</ion-button></ion-col>
-          </ion-row>
-          <ion-row>
-            <ion-col size="3"><ion-button class="key-btn dark" expand="block" (click)="squareRoot()">√</ion-button></ion-col>
-            <ion-col size="3"><ion-button class="key-btn dark" expand="block" (click)="square()">x²</ion-button></ion-col>
-            <ion-col size="3"><ion-button class="key-btn dark" expand="block" (click)="appendDecimal()">.</ion-button></ion-col>
-            <ion-col size="3"><ion-button class="key-btn accent equal" expand="block" (click)="equals()">=</ion-button></ion-col>
-          </ion-row>
-          <ion-row>
-            <ion-col size="6"><ion-button class="key-btn" expand="block" (click)="appendDigit('0')">0</ion-button></ion-col>
-            <ion-col size="3"><ion-button class="key-btn dark" expand="block" (click)="memoryRecall()">MR</ion-button></ion-col>
-            <ion-col size="3"><ion-button class="key-btn dark" expand="block" (click)="addPi()">π</ion-button></ion-col>
-          </ion-row>
-        </ion-grid>
-      </ion-card-content>
-    </ion-card>
-  </div>
+      <aside class="detail-panel" *ngIf="selectedPokemon as pokemon">
+        <div class="detail-art"><span>#{{ pokemon.id.toString().padStart(3, '0') }}</span><img [src]="pokemon.image" [alt]="pokemon.name"></div>
+        <div class="detail-copy">
+          <p class="eyebrow">Registro seleccionado</p>
+          <h2>{{ pokemon.name }}</h2>
+          <div class="type-row"><span class="type-pill" [class]="'type-' + pokemon.type.toLowerCase()">{{ pokemon.type }}</span><span class="type-pill secondary" *ngIf="pokemon.secondaryType">{{ pokemon.secondaryType }}</span></div>
+          <p class="description">{{ pokemon.description }}</p>
+          <div class="stats"><div><small>Altura</small><strong>{{ pokemon.height }} m</strong></div><div><small>Peso</small><strong>{{ pokemon.weight }} kg</strong></div></div>
+          <ion-button expand="block" class="edit-button" (click)="openEdit()">Modificar registro</ion-button>
+        </div>
+      </aside>
+    </div>
+
+    <section class="form-panel" *ngIf="isFormOpen">
+      <div class="form-heading"><div><p class="eyebrow">{{ isEditing ? 'PUT /pokedex/:id' : 'POST /pokedex' }}</p><h2>{{ isEditing ? 'Modificar Pokémon' : 'Nuevo Pokémon' }}</h2></div><ion-button fill="clear" (click)="cancelForm()">Cerrar</ion-button></div>
+      <div class="form-grid">
+        <ion-input label="Nombre" label-placement="stacked" fill="outline" [(ngModel)]="form.name" required></ion-input>
+        <ion-input label="Tipo principal" label-placement="stacked" fill="outline" [(ngModel)]="form.type" required></ion-input>
+        <ion-input label="Tipo secundario" label-placement="stacked" fill="outline" [(ngModel)]="form.secondaryType"></ion-input>
+        <ion-input label="Altura (m)" type="number" label-placement="stacked" fill="outline" [(ngModel)]="form.height"></ion-input>
+        <ion-input label="Peso (kg)" type="number" label-placement="stacked" fill="outline" [(ngModel)]="form.weight"></ion-input>
+        <ion-input label="URL de imagen" label-placement="stacked" fill="outline" [(ngModel)]="form.image"></ion-input>
+        <ion-textarea class="description-input" label="Descripción" label-placement="stacked" fill="outline" [(ngModel)]="form.description"></ion-textarea>
+      </div>
+      <ion-button class="save-button" (click)="savePokemon()" [disabled]="!form.name || !form.type || !form.description">Guardar cambios</ion-button>
+    </section>
+  </main>
 </ion-content>
