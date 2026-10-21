@@ -1,0 +1,186 @@
+<app-header section="Cliente"></app-header>
+
+<ion-content>
+  <div class="page-wrap">
+    <!-- ===== MAPA ===== -->
+    <app-route-map [origin]="mapOrigin()" [destination]="mapDestination()" [driver]="driverPoint()" [height]="250"></app-route-map>
+
+    @if (active()?.data; as ride) {
+      <!-- ===== VIAJE ACTIVO (seguimiento cada 5 s) ===== -->
+      <ion-card class="soft-card">
+        <ion-card-content>
+          <div class="row-between">
+            <p class="eyebrow">Tu viaje #{{ ride.id }}</p>
+            <span class="status-pill" [class]="ride.status | statusTone">{{ ride.status | statusLabel }}</span>
+          </div>
+          <h2 class="section-title">{{ ride.status === 'requested' ? 'Buscando conductor…' : 'Tu conductor va en camino' }}</h2>
+
+          <!-- Progreso: solicitado → asignado → llegó → en viaje -->
+          <div class="progress">
+            @for (s of steps; track s; let i = $index) {
+              <div class="step" [class.done]="i <= stepIndex()">
+                <span class="dot"></span>
+                <small>{{ s | statusLabel }}</small>
+              </div>
+            }
+          </div>
+
+          @if (ride.status === 'requested') {
+            <ion-progress-bar type="indeterminate" color="primary"></ion-progress-bar>
+          }
+
+          @if (ride.origin_name) { <div class="kv"><span>Recogida</span><span>{{ ride.origin_name }}</span></div> }
+          @if (ride.destination_name) { <div class="kv"><span>Destino</span><span>{{ ride.destination_name }}</span></div> }
+          <div class="kv"><span>Tarifa estimada</span><span>{{ ride.estimated_fare | cop }}</span></div>
+
+          @if (ride.driver) {
+            <div class="driver-box">
+              <div class="car">🚗</div>
+              <div class="info">
+                <strong>{{ ride.driver.user.name }}</strong>
+                <span><ion-icon name="star" color="warning"></ion-icon> {{ ride.driver.rating_average ?? '—' }}</span>
+                @if (ride.driver.user.phone) { <a [href]="'tel:' + ride.driver.user.phone">📞 {{ ride.driver.user.phone }}</a> }
+              </div>
+              @if (ride.vehicle) {
+                <div class="plate">
+                  <b>{{ ride.vehicle.plate }}</b>
+                  <small>{{ ride.vehicle.brand }} {{ ride.vehicle.model }}</small>
+                  <small>{{ ride.vehicle.color }}</small>
+                </div>
+              }
+            </div>
+          }
+
+          @if (canCancel()) {
+            <ion-button expand="block" color="danger" fill="outline" (click)="cancelRide()">
+              <ion-icon slot="start" name="close-circle"></ion-icon> Cancelar viaje
+            </ion-button>
+          }
+        </ion-card-content>
+      </ion-card>
+    } @else {
+      <!-- ===== SOLICITAR VIAJE ===== -->
+      <ion-card class="soft-card">
+        <ion-card-content>
+          <p class="eyebrow">Selecciona tu ruta o usa geolocalización</p>
+          <h2 class="section-title">Solicitar Viaje</h2>
+
+          <ion-button expand="block" fill="outline" (click)="useMyLocation()" [disabled]="locating()">
+            <ion-icon slot="start" name="locate"></ion-icon>
+            {{ locating() ? 'Ubicando…' : 'Usar Mi Ubicación Actual (GPS)' }}
+          </ion-button>
+
+          <ion-list lines="none" class="route-list">
+            <ion-item>
+              <ion-icon slot="start" name="location" color="primary"></ion-icon>
+              @if (gpsPoint()) {
+                <ion-label>
+                  <p>Punto de Recogida</p>
+                  <h3>📡 {{ origin().name }}</h3>
+                </ion-label>
+              } @else {
+                <ion-select label="Punto de Recogida" labelPlacement="stacked" interface="action-sheet"
+                  [value]="origin().name" (ionChange)="selectOrigin($event.detail.value)">
+                  @for (p of places; track p.name) { <ion-select-option [value]="p.name">{{ p.name }}</ion-select-option> }
+                </ion-select>
+              }
+            </ion-item>
+            <ion-item>
+              <ion-icon slot="start" name="flag" color="danger"></ion-icon>
+              <ion-select label="Destino" labelPlacement="stacked" interface="action-sheet"
+                [value]="destination().name" (ionChange)="selectDestination($event.detail.value)">
+                @for (p of places; track p.name) { <ion-select-option [value]="p.name">{{ p.name }}</ion-select-option> }
+              </ion-select>
+            </ion-item>
+          </ion-list>
+
+          <!-- Vista previa local (Haversine + tarifa pública) -->
+          <div class="preview">
+            <div><b>{{ preview().km | number: '1.2-2' }}</b><small>km</small></div>
+            <div><b>{{ preview().min }}</b><small>min</small></div>
+            <div><b>{{ preview().value | cop }}</b><small>aprox.</small></div>
+          </div>
+
+          @if (estimate(); as e) {
+            <div class="estimate">
+              <p class="eyebrow">Estimación del servidor</p>
+              <div class="kv"><span>Distancia</span><span>{{ e.distance_km }} km</span></div>
+              <div class="kv"><span>Duración</span><span>{{ e.duration_min }} min</span></div>
+              <div class="kv"><span>Tarifa base</span><span>{{ e.fare_breakdown.base_fare | cop }}</span></div>
+              <div class="kv"><span>Precio por km</span><span>{{ e.fare_breakdown.price_per_km | cop }}</span></div>
+              <div class="kv"><span>Precio por minuto</span><span>{{ e.fare_breakdown.price_per_minute | cop }}</span></div>
+              <div class="kv"><span>Multiplicador</span><span>x{{ e.fare_breakdown.surge_multiplier }}</span></div>
+              <div class="total">{{ e.estimated_fare | cop }}</div>
+            </div>
+          }
+
+          <div class="actions">
+            <ion-button fill="outline" (click)="estimateFare()" [disabled]="busy()">
+              <ion-icon slot="start" name="cash"></ion-icon> Estimar tarifa
+            </ion-button>
+            <ion-button class="cta" (click)="requestRide()" [disabled]="busy()">
+              <ion-icon slot="start" name="navigate"></ion-icon> Confirmar viaje
+            </ion-button>
+          </div>
+        </ion-card-content>
+      </ion-card>
+    }
+
+    <!-- ===== HISTORIAL ===== -->
+    <ion-card class="soft-card">
+      <ion-card-content>
+        <div class="row-between">
+          <div>
+            <p class="eyebrow">Tus recorridos</p>
+            <h2 class="section-title">Historial de viajes</h2>
+          </div>
+          <ion-button fill="clear" (click)="loadTrips()" aria-label="Recargar historial"><ion-icon name="refresh"></ion-icon></ion-button>
+        </div>
+
+        @for (t of trips(); track t.id) {
+          <div class="trip">
+            <div class="trip-main">
+              <strong>Viaje #{{ t.id }}</strong>
+              <small>{{ t.driver?.user?.name ?? 'Sin conductor' }} · {{ t.vehicle?.plate ?? '—' }}</small>
+              <small>{{ t.completed_at | date: 'dd/MM/yyyy HH:mm' }}</small>
+            </div>
+            <div class="trip-side">
+              <span class="status-pill" [class]="t.status | statusTone">{{ t.status | statusLabel }}</span>
+              <b>{{ (t.final_fare ?? t.estimated_fare) | cop }}</b>
+              @if (t.status === 'completed' && !t.rating) {
+                <ion-button size="small" (click)="openRating(t)"><ion-icon slot="start" name="star"></ion-icon>Calificar</ion-button>
+              } @else if (t.rating) {
+                <small class="stars">{{ '★'.repeat(t.rating.score) }}</small>
+              }
+            </div>
+          </div>
+        } @empty {
+          <p class="empty">{{ loadingTrips() ? 'Cargando…' : 'Aún no tienes viajes.' }}</p>
+        }
+      </ion-card-content>
+    </ion-card>
+  </div>
+
+  <!-- ===== MODAL DE CALIFICACIÓN ===== -->
+  <ion-modal [isOpen]="!!ratingTrip()" (didDismiss)="ratingTrip.set(null)" [initialBreakpoint]="0.75" [breakpoints]="[0, 0.75, 1]">
+    <ng-template>
+      <ion-content class="ion-padding">
+        <p class="eyebrow">Viaje #{{ ratingTrip()?.id }}</p>
+        <h2 class="section-title">¿Cómo estuvo tu viaje?</h2>
+        <div class="star-row">
+          @for (n of [1, 2, 3, 4, 5]; track n) {
+            <button type="button" (click)="setScore(n)" [attr.aria-label]="n + ' estrellas'">
+              <ion-icon [name]="n <= rating.score ? 'star' : 'star-outline'"></ion-icon>
+            </button>
+          }
+        </div>
+        <ion-textarea label="Comentario" labelPlacement="floating" fill="outline" [autoGrow]="true"
+          [(ngModel)]="rating.comment" placeholder="Conducción impecable y vehículo muy limpio."></ion-textarea>
+        <ion-item lines="none">
+          <ion-toggle [(ngModel)]="rating.has_incident" color="danger">Reportar una incidencia</ion-toggle>
+        </ion-item>
+        <ion-button expand="block" class="cta" (click)="sendRating()" [disabled]="busy()">Enviar calificación</ion-button>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+</ion-content>

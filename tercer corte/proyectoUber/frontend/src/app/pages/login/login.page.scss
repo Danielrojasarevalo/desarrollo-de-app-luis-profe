@@ -1,0 +1,109 @@
+.hero {
+  padding: 46px 20px 70px;
+  background: var(--uber-gradient);
+  color: #ffffff;
+  text-align: center;
+
+  h1 {
+    margin: 8px 0 2px;
+    font-size: 2.2rem;
+    font-weight: 500;
+
+    b { font-weight: 900; color: #a7f3d0; }
+  }
+
+  p { margin: 0; opacity: 0.9; }
+}
+
+.logo {
+  display: grid;
+  place-items: center;
+  width: 72px;
+  height: 72px;
+  margin: 0 auto;
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.18);
+  font-size: 38px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+}
+
+// La tarjeta sube un poco sobre la portada verde.
+.sheet { margin-top: -54px; }
+
+.tabs, .role-switch {
+  margin: 6px 0 14px;
+  --background: #ecfdf5;
+  border-radius: 12px;
+}
+
+.field {
+  margin-bottom: 12px;
+  --border-radius: 12px;
+  --highlight-color-focused: var(--ion-color-primary);
+}
+
+.cta {
+  margin-top: 6px;
+  --border-radius: 14px;
+  --box-shadow: 0 8px 20px rgba(14, 159, 110, 0.35);
+  height: 50px;
+  font-weight: 800;
+}
+
+.grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 10px;
+}
+
+.vehicle-title { margin: 6px 0 10px; }
+
+.hint {
+  margin: 0 0 8px;
+  font-size: 0.82rem;
+  color: var(--ion-color-medium);
+}
+
+.account {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  border-top: 1px solid #d1fae5;
+}
+
+.acc-icon {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 14px;
+  background: #d1fae5;
+  color: var(--ion-color-tertiary);
+  font-size: 22px;
+}
+
+.acc-info {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+
+  strong { color: var(--ion-color-tertiary); }
+  span { font-size: 0.88rem; }
+  small {
+    overflow: hidden;
+    color: var(--ion-color-medium);
+    font-family: monospace;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+.acc-actions {
+  display: flex;
+  flex-direction: column;
+
+  ion-button { margin: 2px 0; --border-radius: 10px; }
+}

@@ -1,0 +1,148 @@
+<app-header section="Conductor"></app-header>
+
+<ion-content>
+  <div class="page-wrap">
+    @if (banner()) {
+      <div class="banner">{{ banner() }}</div>
+    }
+
+    <!-- ===== PERFIL Y DISPONIBILIDAD ===== -->
+    <ion-card class="soft-card">
+      <ion-card-content class="profile">
+        <div class="avatar">🚗</div>
+        <div class="data">
+          <strong>{{ user()?.name }}</strong>
+          <span class="status-pill" [class]="approval() ?? 'pending' | statusTone">{{ approval() ? (approval() | statusLabel) : 'Sin verificar' }}</span>
+          @if (user()?.driver?.rating_average !== undefined) {
+            <small><ion-icon name="star" color="warning"></ion-icon> {{ user()?.driver?.rating_average }}</small>
+          }
+          @if (vehicle(); as v) {
+            <small>{{ v.brand }} {{ v.model }} ({{ v.plate }})</small>
+          }
+        </div>
+        <div class="switch">
+          <ion-toggle [checked]="availability() === 'available'" (ionChange)="toggleAvailability($event.detail.checked, $any($event.target))"
+            [disabled]="!!current()" color="primary" labelPlacement="stacked">
+            {{ availability() === 'available' ? 'En línea' : 'Disponible' }}
+          </ion-toggle>
+        </div>
+      </ion-card-content>
+      @if (approval() === 'pending') {
+        <p class="pending-note">Tu cuenta está pendiente de aprobación por un administrador. Aún no puedes recibir viajes.</p>
+      }
+    </ion-card>
+
+    <!-- ===== RESUMEN DE INGRESOS ===== -->
+    <div class="earnings">
+      <div><small>Ingresos de hoy</small><b>{{ earnings().total | cop }}</b></div>
+      <div><small>Viajes</small><b>{{ earnings().trips }}</b></div>
+    </div>
+
+    <!-- ===== MAPA ===== -->
+    <app-route-map [origin]="current()?.origin ?? null" [destination]="current()?.destination ?? null"
+      [driver]="position()" [followDriver]="transmitting()" [height]="230"></app-route-map>
+
+    <!-- ===== GPS EN VIVO ===== -->
+    <ion-card class="soft-card">
+      <ion-card-content>
+        <div class="gps-title">
+          <span class="live" [class.on]="transmitting()"></span>
+          <h2 class="section-title">{{ transmitting() ? 'Transmitiendo GPS en Vivo' : 'GPS en pausa' }}</h2>
+        </div>
+        <p class="eyebrow">Geolocalización &amp; tracking</p>
+
+        <div class="gps-data">
+          <div><small>GPS</small><b>{{ position().latitude | number: '1.4-4' }}, {{ position().longitude | number: '1.4-4' }}</b></div>
+          <div><small>Velocidad</small><b>{{ speedKmh() }} km/h</b></div>
+        </div>
+        @if (lastSent(); as sent) {
+          <p class="sent">Último envío: {{ sent | date: 'HH:mm:ss' }}</p>
+        }
+
+        <ion-segment [value]="gpsMode()" (ionChange)="setGpsMode($event.detail.value)" class="mode">
+          <ion-segment-button value="sim"><ion-label>🚕 Simulación</ion-label></ion-segment-button>
+          <ion-segment-button value="real"><ion-label>📡 GPS Real</ion-label></ion-segment-button>
+        </ion-segment>
+
+        <ion-button expand="block" [color]="transmitting() ? 'warning' : 'primary'" class="gps-btn" (click)="toggleGps()">
+          <ion-icon slot="start" [name]="transmitting() ? 'pause' : 'play'"></ion-icon>
+          {{ transmitting() ? 'Pausar Transmisión GPS' : 'Iniciar Transmisión GPS' }}
+        </ion-button>
+        <ion-button expand="block" fill="clear" size="small" (click)="centerMap()">
+          <ion-icon slot="start" name="locate"></ion-icon> Centrar Mapa en Mi Ubicación
+        </ion-button>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- ===== VIAJE EN CURSO ===== -->
+    @if (current(); as c) {
+      <ion-card class="soft-card trip-card">
+        <ion-card-content>
+          <div class="row-between">
+            <p class="eyebrow">Viaje #{{ c.trip.id }}</p>
+            <span class="status-pill" [class]="c.trip.status | statusTone">{{ c.trip.status | statusLabel }}</span>
+          </div>
+          <h2 class="section-title">{{ c.request.client.name }}</h2>
+          <div class="kv"><span>Teléfono</span><span><a [href]="'tel:' + c.request.client.phone">{{ c.request.client.phone }}</a></span></div>
+          <div class="kv"><span>Recogida</span><span>{{ c.request.origin_name }}</span></div>
+          <div class="kv"><span>Destino</span><span>{{ c.request.destination_name }}</span></div>
+          <div class="kv"><span>Tarifa estimada</span><span>{{ c.request.estimated_fare | cop }}</span></div>
+          @if (c.trip.status === 'in_progress') {
+            <div class="kv"><span>Recorrido</span><span>{{ c.travelledKm | number: '1.2-2' }} km</span></div>
+          }
+
+          <div class="trip-actions">
+            @switch (c.trip.status) {
+              @case ('assigned') {
+                <ion-button expand="block" (click)="arrive()" [disabled]="busy()">
+                  <ion-icon slot="start" name="location"></ion-icon> Llegué al punto de recogida
+                </ion-button>
+              }
+              @case ('driver_arrived') {
+                <ion-button expand="block" (click)="start()" [disabled]="busy()">
+                  <ion-icon slot="start" name="play"></ion-icon> Iniciar viaje
+                </ion-button>
+              }
+              @case ('in_progress') {
+                <ion-button expand="block" color="tertiary" (click)="complete()" [disabled]="busy()">
+                  <ion-icon slot="start" name="flag"></ion-icon> Finalizar viaje
+                </ion-button>
+              }
+            }
+          </div>
+        </ion-card-content>
+      </ion-card>
+    } @else {
+      <!-- ===== SOLICITUDES PENDIENTES ===== -->
+      <ion-card class="soft-card">
+        <ion-card-content>
+          <div class="row-between">
+            <div>
+              <p class="eyebrow">Actualiza cada 5 segundos</p>
+              <h2 class="section-title">Solicitudes</h2>
+            </div>
+            <ion-button fill="clear" (click)="loadRequests()" aria-label="Recargar solicitudes"><ion-icon name="refresh"></ion-icon></ion-button>
+          </div>
+
+          @for (r of requests(); track r.id) {
+            <div class="request">
+              <div class="route">
+                <span><i class="dot green"></i>{{ r.origin_name }}</span>
+                <span><i class="dot red"></i>{{ r.destination_name }}</span>
+                <small>{{ r.client.name }} · {{ r.estimated_distance_km }} km</small>
+              </div>
+              <div class="side">
+                <b>{{ r.estimated_fare | cop }}</b>
+                <ion-button size="small" (click)="accept(r)" [disabled]="busy()">Aceptar</ion-button>
+              </div>
+            </div>
+          } @empty {
+            <p class="empty">
+              {{ availability() === 'available' ? 'No hay solicitudes por ahora. Te avisaremos aquí.' : 'Activa "Disponible" para recibir solicitudes.' }}
+            </p>
+          }
+        </ion-card-content>
+      </ion-card>
+    }
+  </div>
+</ion-content>

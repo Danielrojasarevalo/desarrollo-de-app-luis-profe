@@ -1,0 +1,210 @@
+<app-header section="Administrador"></app-header>
+
+<ion-content>
+  <ion-segment [value]="tab()" (ionChange)="setTab($event.detail.value)" [scrollable]="true" class="tabs">
+    <ion-segment-button value="dashboard"><ion-icon name="speedometer"></ion-icon><ion-label>Panel</ion-label></ion-segment-button>
+    <ion-segment-button value="drivers"><ion-icon name="car-sport"></ion-icon><ion-label>Conductores</ion-label></ion-segment-button>
+    <ion-segment-button value="fares"><ion-icon name="pricetag"></ion-icon><ion-label>Tarifas</ion-label></ion-segment-button>
+    <ion-segment-button value="trips"><ion-icon name="navigate"></ion-icon><ion-label>Viajes</ion-label></ion-segment-button>
+    <ion-segment-button value="reports"><ion-icon name="document"></ion-icon><ion-label>Reportes</ion-label></ion-segment-button>
+    <ion-segment-button value="audit"><ion-icon name="shield-checkmark"></ion-icon><ion-label>Auditoría</ion-label></ion-segment-button>
+  </ion-segment>
+  @if (loading()) { <ion-progress-bar type="indeterminate"></ion-progress-bar> }
+
+  <div class="page-wrap">
+    @switch (tab()) {
+      <!-- ===== PANEL ===== -->
+      @case ('dashboard') {
+        <div class="revenue">
+          <small>Ingresos totales</small>
+          <b>{{ dashboard()?.stats?.total_revenue | cop }}</b>
+        </div>
+        <div class="kpi-grid">
+          @for (k of kpis; track k.key) {
+            <div class="kpi">
+              <ion-icon [name]="k.icon"></ion-icon>
+              <b>{{ statValue(k.key) }}</b>
+              <small>{{ k.label }}</small>
+            </div>
+          }
+        </div>
+
+        <ion-card class="soft-card">
+          <ion-card-content>
+            <p class="eyebrow">Actividad</p>
+            <h2 class="section-title">Viajes recientes</h2>
+            @for (t of dashboard()?.recent_trips ?? []; track t.id) {
+              <div class="kv">
+                <span>#{{ t.id }} · {{ t.driver?.user?.name ?? '—' }}</span>
+                <span><span class="status-pill" [class]="t.status | statusTone">{{ t.status | statusLabel }}</span></span>
+              </div>
+            } @empty { <p class="empty">Sin viajes recientes.</p> }
+          </ion-card-content>
+        </ion-card>
+
+        <ion-card class="soft-card">
+          <ion-card-content>
+            <p class="eyebrow">Reportadas por los clientes</p>
+            <h2 class="section-title">Incidencias</h2>
+            @for (i of dashboard()?.recent_incidents ?? []; track $index) {
+              <div class="incident">
+                <ion-icon name="alert-circle" color="danger"></ion-icon>
+                <span>{{ i['comment'] ?? i['description'] ?? 'Incidencia' }}</span>
+              </div>
+            } @empty { <p class="empty">Sin incidencias. 🌿</p> }
+          </ion-card-content>
+        </ion-card>
+      }
+
+      <!-- ===== CONDUCTORES ===== -->
+      @case ('drivers') {
+        <ion-select class="filter" label="Estado" labelPlacement="start" interface="popover" fill="outline"
+          [value]="driverFilter" (ionChange)="driverFilter = $event.detail.value; load('drivers')">
+          <ion-select-option value="">Todos</ion-select-option>
+          <ion-select-option value="pending">Pendientes</ion-select-option>
+          <ion-select-option value="approved">Aprobados</ion-select-option>
+          <ion-select-option value="suspended">Suspendidos</ion-select-option>
+          <ion-select-option value="rejected">Rechazados</ion-select-option>
+        </ion-select>
+
+        @for (d of drivers(); track d.id) {
+          <ion-card class="soft-card">
+            <ion-card-content>
+              <div class="row-between">
+                <strong class="name">{{ d.user.name }}</strong>
+                <span class="status-pill" [class]="d.approval_status | statusTone">{{ d.approval_status | statusLabel }}</span>
+              </div>
+              <div class="kv"><span>Correo</span><span>{{ d.user.email }}</span></div>
+              <div class="kv"><span>Licencia</span><span>{{ d.license_number }}</span></div>
+              <div class="kv"><span>Calificación</span><span>⭐ {{ d.rating_average }}</span></div>
+              @for (v of d.vehicles; track v.plate) {
+                <div class="kv"><span>Vehículo</span><span>{{ v.brand }} {{ v.model }} {{ v.year }} · {{ v.plate }}</span></div>
+              }
+              <div class="approval-actions">
+                @if (d.approval_status !== 'approved') {
+                  <ion-button size="small" (click)="changeApproval(d, 'approved')">Aprobar</ion-button>
+                }
+                @if (d.approval_status !== 'suspended') {
+                  <ion-button size="small" color="warning" (click)="changeApproval(d, 'suspended')">Suspender</ion-button>
+                }
+                @if (d.approval_status !== 'rejected') {
+                  <ion-button size="small" color="danger" fill="outline" (click)="changeApproval(d, 'rejected')">Rechazar</ion-button>
+                }
+              </div>
+            </ion-card-content>
+          </ion-card>
+        } @empty { <p class="empty">No hay conductores con ese estado.</p> }
+      }
+
+      <!-- ===== TARIFAS ===== -->
+      @case ('fares') {
+        @for (f of fares(); track f.id ?? f.name) {
+          <ion-card class="soft-card" [class.active-fare]="f.active">
+            <ion-card-content>
+              <div class="row-between">
+                <strong class="name">{{ f.name }}</strong>
+                <span class="status-pill" [class.warn]="!f.active">{{ f.active ? 'Activa' : 'Inactiva' }}</span>
+              </div>
+              <div class="kv"><span>Tarifa base</span><span>{{ f.base_fare | cop }}</span></div>
+              <div class="kv"><span>Por km</span><span>{{ f.price_per_km | cop }}</span></div>
+              <div class="kv"><span>Por minuto</span><span>{{ f.price_per_minute | cop }}</span></div>
+              <div class="kv"><span>Mínima</span><span>{{ f.minimum_fare | cop }}</span></div>
+              <div class="kv"><span>Multiplicador</span><span>x{{ f.surge_multiplier }}</span></div>
+            </ion-card-content>
+          </ion-card>
+        }
+
+        <ion-card class="soft-card">
+          <ion-card-content>
+            <p class="eyebrow">Nueva configuración</p>
+            <h2 class="section-title">Crear tarifa</h2>
+            <ion-input class="field" label="Nombre" labelPlacement="floating" fill="outline" [(ngModel)]="newFare.name" placeholder="Tarifa Hora Pico"></ion-input>
+            <div class="grid-2">
+              <ion-input class="field" label="Base" labelPlacement="floating" fill="outline" type="number" [(ngModel)]="newFare.base_fare"></ion-input>
+              <ion-input class="field" label="Por km" labelPlacement="floating" fill="outline" type="number" [(ngModel)]="newFare.price_per_km"></ion-input>
+              <ion-input class="field" label="Por minuto" labelPlacement="floating" fill="outline" type="number" [(ngModel)]="newFare.price_per_minute"></ion-input>
+              <ion-input class="field" label="Mínima" labelPlacement="floating" fill="outline" type="number" [(ngModel)]="newFare.minimum_fare"></ion-input>
+              <ion-input class="field" label="Multiplicador" labelPlacement="floating" fill="outline" type="number" step="0.1" [(ngModel)]="newFare.surge_multiplier"></ion-input>
+              <ion-item lines="none" class="field"><ion-toggle [(ngModel)]="newFare.active">Activa</ion-toggle></ion-item>
+            </div>
+            <ion-button expand="block" (click)="createFare()">Guardar tarifa</ion-button>
+          </ion-card-content>
+        </ion-card>
+      }
+
+      <!-- ===== VIAJES ===== -->
+      @case ('trips') {
+        <ion-card class="soft-card">
+          <ion-card-content>
+            <div class="grid-2">
+              <ion-select class="field" label="Estado" labelPlacement="floating" fill="outline" interface="popover" [(ngModel)]="tripFilters.status">
+                <ion-select-option value="">Todos</ion-select-option>
+                <ion-select-option value="assigned">Asignado</ion-select-option>
+                <ion-select-option value="in_progress">En viaje</ion-select-option>
+                <ion-select-option value="completed">Completado</ion-select-option>
+                <ion-select-option value="cancelled">Cancelado</ion-select-option>
+              </ion-select>
+              <ion-input class="field" label="Fecha" labelPlacement="floating" fill="outline" type="date" [(ngModel)]="tripFilters.date"></ion-input>
+              <ion-input class="field" label="ID conductor" labelPlacement="floating" fill="outline" type="number" [(ngModel)]="tripFilters.driver_id"></ion-input>
+              <ion-input class="field" label="ID cliente" labelPlacement="floating" fill="outline" type="number" [(ngModel)]="tripFilters.client_id"></ion-input>
+            </div>
+            <div class="grid-2">
+              <ion-button fill="outline" (click)="clearTripFilters()">Limpiar</ion-button>
+              <ion-button (click)="load('trips')">Filtrar</ion-button>
+            </div>
+          </ion-card-content>
+        </ion-card>
+
+        @for (t of trips(); track t.id) {
+          <div class="trip-row">
+            <div>
+              <strong>Viaje #{{ t.id }}</strong>
+              <small>{{ t.client?.name ?? ('Cliente ' + (t.client_id ?? '—')) }} → {{ t.driver?.user?.name ?? ('Conductor ' + (t.driver_id ?? '—')) }}</small>
+              <small>{{ t.completed_at | date: 'dd/MM/yyyy HH:mm' }}</small>
+            </div>
+            <div class="right">
+              <span class="status-pill" [class]="t.status | statusTone">{{ t.status | statusLabel }}</span>
+              <b>{{ (t.final_fare ?? t.estimated_fare) | cop }}</b>
+            </div>
+          </div>
+        } @empty { <p class="empty">No hay viajes con esos filtros.</p> }
+      }
+
+      <!-- ===== REPORTES ===== -->
+      @case ('reports') {
+        @for (section of entries(reports()); track section.key) {
+          <ion-card class="soft-card">
+            <ion-card-content>
+              <h2 class="section-title">{{ humanize(section.key) }}</h2>
+              @if (section.nested) {
+                @for (row of entries(section.value); track row.key) {
+                  @if (row.nested) {
+                    <pre>{{ row.value | json }}</pre>
+                  } @else {
+                    <div class="kv"><span>{{ humanize(row.key) }}</span><span>{{ row.value }}</span></div>
+                  }
+                }
+              } @else {
+                <p>{{ section.value }}</p>
+              }
+            </ion-card-content>
+          </ion-card>
+        } @empty { <p class="empty">Sin datos de reportes.</p> }
+      }
+
+      <!-- ===== AUDITORÍA ===== -->
+      @case ('audit') {
+        @for (log of logs(); track $index) {
+          <div class="log">
+            <ion-icon name="receipt" color="primary"></ion-icon>
+            <div>
+              <strong>{{ logTitle(log) }}</strong>
+              @if (log['description'] && log['action']) { <small>{{ log['description'] }}</small> }
+              <small>{{ $any(log['created_at']) | date: 'dd/MM/yyyy HH:mm:ss' }}</small>
+            </div>
+          </div>
+        } @empty { <p class="empty">Sin registros de auditoría.</p> }
+      }
+    }
+  </div>
+</ion-content>

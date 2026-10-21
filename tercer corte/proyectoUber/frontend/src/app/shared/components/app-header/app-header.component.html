@@ -1,0 +1,25 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar class="brand-bar">
+    <ion-title>
+      <span class="brand">Uber<b>Verde</b></span>
+      <span class="section">· {{ section }}</span>
+    </ion-title>
+    <ion-buttons slot="end">
+      <ion-button class="logout" (click)="logout()">
+        <ion-icon slot="start" name="log-out"></ion-icon>
+        Salir
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+
+  @if (auth.user(); as user) {
+    <div class="user-strip">
+      <div class="avatar">{{ user.name.charAt(0) }}</div>
+      <div class="who">
+        <strong>{{ user.name }}</strong>
+        <small>{{ user.email }}</small>
+      </div>
+      <span class="role">ROL: {{ user.role }}</span>
+    </div>
+  }
+</ion-header>

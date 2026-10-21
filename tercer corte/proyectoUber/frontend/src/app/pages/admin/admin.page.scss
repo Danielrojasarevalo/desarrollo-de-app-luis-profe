@@ -1,0 +1,124 @@
+.tabs {
+  background: #ffffff;
+  border-bottom: 1px solid #d1fae5;
+
+  ion-segment-button {
+    --color-checked: var(--ion-color-primary);
+    --indicator-color: var(--ion-color-primary);
+    min-width: 92px;
+    font-size: 0.75rem;
+  }
+}
+
+.row-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.name { color: var(--ion-color-tertiary); font-size: 1.05rem; }
+
+.revenue {
+  display: flex;
+  flex-direction: column;
+  margin: 14px 0;
+  padding: 18px;
+  border-radius: var(--uber-radius);
+  background: var(--uber-gradient);
+  color: #ffffff;
+  box-shadow: var(--uber-card-shadow);
+
+  small { opacity: 0.85; }
+  b { font-size: 2rem; font-weight: 900; }
+}
+
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+.kpi {
+  display: flex;
+  flex-direction: column;
+  padding: 14px;
+  border-radius: 16px;
+  background: #ffffff;
+  box-shadow: var(--uber-card-shadow);
+
+  ion-icon { color: var(--ion-color-primary); font-size: 22px; }
+  b { margin-top: 4px; color: var(--ion-color-tertiary); font-size: 1.6rem; font-weight: 900; }
+  small { color: var(--ion-color-medium); }
+}
+
+.incident, .log {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 0;
+  border-bottom: 1px dashed #d1fae5;
+}
+
+.log {
+  padding: 12px;
+  margin-bottom: 8px;
+  border: none;
+  border-radius: 14px;
+  background: #ffffff;
+  box-shadow: var(--uber-card-shadow);
+
+  div { display: flex; flex-direction: column; }
+  small { color: var(--ion-color-medium); }
+}
+
+.filter {
+  margin: 14px 0 4px;
+  --border-radius: 12px;
+  background: #ffffff;
+}
+
+.approval-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 10px;
+}
+
+.active-fare { border: 2px solid #34d399; }
+
+.grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 10px;
+}
+
+.field {
+  margin-bottom: 12px;
+  --border-radius: 12px;
+}
+
+.trip-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 8px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: #ffffff;
+  box-shadow: var(--uber-card-shadow);
+
+  div { display: flex; flex-direction: column; gap: 2px; }
+  small { color: var(--ion-color-medium); }
+  .right { align-items: flex-end; }
+  b { color: var(--ion-color-tertiary); }
+}
+
+pre {
+  overflow-x: auto;
+  padding: 10px;
+  border-radius: 10px;
+  background: #ecfdf5;
+  font-size: 0.75rem;
+}

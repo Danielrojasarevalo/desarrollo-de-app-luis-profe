@@ -1,0 +1,72 @@
+.brand-bar {
+  --background: var(--uber-gradient);
+  --color: #ffffff;
+  --min-height: 58px;
+}
+
+.brand {
+  font-weight: 500;
+  letter-spacing: 0.02em;
+
+  b { font-weight: 900; color: #a7f3d0; }
+}
+
+.section {
+  margin-left: 4px;
+  font-size: 0.95rem;
+  opacity: 0.9;
+}
+
+.logout {
+  --color: #ffffff;
+  --background: rgba(255, 255, 255, 0.16);
+  --border-radius: 999px;
+  --padding-start: 12px;
+  --padding-end: 14px;
+  font-weight: 700;
+}
+
+.user-strip {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  background: #ffffff;
+  border-bottom: 1px solid #d1fae5;
+}
+
+.avatar {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: var(--uber-gradient);
+  color: #ffffff;
+  font-weight: 800;
+}
+
+.who {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+
+  strong { color: var(--ion-color-tertiary); }
+  small {
+    overflow: hidden;
+    color: var(--ion-color-medium);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+.role {
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: var(--ion-color-tertiary);
+  color: #ffffff;
+  font-size: 0.7rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}

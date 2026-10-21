@@ -1,0 +1,79 @@
+/*
+ * TEMA VERDE DE LA APP
+ * Ionic pinta botones, chips, toggles, etc. con estas variables (--ion-color-*).
+ * Cambiando "primary" se cambia el color principal de toda la app.
+ * Paleta: verdes esmeralda (primary), menta (secondary) y bosque (tertiary).
+ */
+:root {
+  /* Verde esmeralda: botones principales, enlaces, toggles */
+  --ion-color-primary: #0e9f6e;
+  --ion-color-primary-rgb: 14, 159, 110;
+  --ion-color-primary-contrast: #ffffff;
+  --ion-color-primary-contrast-rgb: 255, 255, 255;
+  --ion-color-primary-shade: #0b8a5f;
+  --ion-color-primary-tint: #26a97d;
+
+  /* Menta: acentos suaves */
+  --ion-color-secondary: #34d399;
+  --ion-color-secondary-rgb: 52, 211, 153;
+  --ion-color-secondary-contrast: #053b2c;
+  --ion-color-secondary-contrast-rgb: 5, 59, 44;
+  --ion-color-secondary-shade: #2eba87;
+  --ion-color-secondary-tint: #48d7a3;
+
+  /* Verde bosque: encabezados y textos fuertes */
+  --ion-color-tertiary: #065f46;
+  --ion-color-tertiary-rgb: 6, 95, 70;
+  --ion-color-tertiary-contrast: #ffffff;
+  --ion-color-tertiary-contrast-rgb: 255, 255, 255;
+  --ion-color-tertiary-shade: #05543e;
+  --ion-color-tertiary-tint: #1f6f59;
+
+  --ion-color-success: #16a34a;
+  --ion-color-success-rgb: 22, 163, 74;
+  --ion-color-success-contrast: #ffffff;
+  --ion-color-success-contrast-rgb: 255, 255, 255;
+  --ion-color-success-shade: #138f41;
+  --ion-color-success-tint: #2dac5c;
+
+  --ion-color-warning: #f59e0b;
+  --ion-color-warning-rgb: 245, 158, 11;
+  --ion-color-warning-contrast: #1f1300;
+  --ion-color-warning-contrast-rgb: 31, 19, 0;
+  --ion-color-warning-shade: #d88b0a;
+  --ion-color-warning-tint: #f6a823;
+
+  --ion-color-danger: #dc2626;
+  --ion-color-danger-rgb: 220, 38, 38;
+  --ion-color-danger-contrast: #ffffff;
+  --ion-color-danger-contrast-rgb: 255, 255, 255;
+  --ion-color-danger-shade: #c22121;
+  --ion-color-danger-tint: #e03c3c;
+
+  --ion-color-medium: #5f7a70;
+  --ion-color-medium-rgb: 95, 122, 112;
+  --ion-color-medium-contrast: #ffffff;
+  --ion-color-medium-contrast-rgb: 255, 255, 255;
+  --ion-color-medium-shade: #546b63;
+  --ion-color-medium-tint: #6f877e;
+
+  --ion-color-light: #ecfdf5;
+  --ion-color-light-rgb: 236, 253, 245;
+  --ion-color-light-contrast: #064e3b;
+  --ion-color-light-contrast-rgb: 6, 78, 59;
+  --ion-color-light-shade: #d0dfd8;
+  --ion-color-light-tint: #eefdf6;
+
+  /* Fondo general menta muy claro y texto verde oscuro */
+  --ion-background-color: #f0fdf4;
+  --ion-background-color-rgb: 240, 253, 244;
+  --ion-text-color: #0b2e23;
+  --ion-text-color-rgb: 11, 46, 35;
+
+  --ion-font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+
+  /* Variables propias reutilizadas en las hojas de estilo */
+  --uber-gradient: linear-gradient(135deg, #064e3b 0%, #047857 45%, #10b981 100%);
+  --uber-card-shadow: 0 10px 28px rgba(6, 95, 70, 0.12);
+  --uber-radius: 18px;
+}

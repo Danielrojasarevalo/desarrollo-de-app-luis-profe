@@ -1,0 +1,7 @@
+{
+  "name": "uberVerde",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}

@@ -1,0 +1,112 @@
+<ion-content>
+  <!-- Portada verde con el logo -->
+  <section class="hero">
+    <div class="logo">🚗</div>
+    <h1>Uber<b>Verde</b></h1>
+    <p>Viaja seguro por Bogotá</p>
+  </section>
+
+  <div class="page-wrap sheet">
+    <ion-card class="soft-card">
+      <ion-card-content>
+        <p class="eyebrow">Inicia sesión con tu cuenta para continuar</p>
+        <h2 class="section-title">Bienvenido a Uber</h2>
+
+        <ion-segment [value]="tab()" (ionChange)="setTab($event.detail.value)" class="tabs">
+          <ion-segment-button value="login"><ion-label>Iniciar Sesión</ion-label></ion-segment-button>
+          <ion-segment-button value="register"><ion-label>Registrarse</ion-label></ion-segment-button>
+        </ion-segment>
+
+        <!-- ===== INICIAR SESIÓN ===== -->
+        @if (tab() === 'login') {
+          <form (ngSubmit)="submitLogin()">
+            <ion-input class="field" label="Correo o Teléfono" labelPlacement="floating" fill="outline"
+              name="login" [(ngModel)]="credentials.login" autocomplete="username"></ion-input>
+            <ion-input class="field" label="Contraseña" labelPlacement="floating" fill="outline" type="password"
+              name="password" [(ngModel)]="credentials.password" autocomplete="current-password">
+              <ion-input-password-toggle slot="end"></ion-input-password-toggle>
+            </ion-input>
+
+            <ion-button expand="block" type="submit" class="cta" [disabled]="loading()">
+              @if (loading()) { <ion-spinner name="crescent"></ion-spinner> } @else { Ingresar a la Plataforma }
+            </ion-button>
+          </form>
+          <ion-button fill="clear" size="small" expand="block" (click)="forgotPassword()">¿Olvidaste tu contraseña?</ion-button>
+        }
+
+        <!-- ===== REGISTRARSE ===== -->
+        @if (tab() === 'register') {
+          <form (ngSubmit)="submitRegister()">
+            <ion-segment [(ngModel)]="form.role" name="role" class="role-switch">
+              <ion-segment-button value="client"><ion-icon name="person"></ion-icon><ion-label>Pasajero</ion-label></ion-segment-button>
+              <ion-segment-button value="driver"><ion-icon name="car-sport"></ion-icon><ion-label>Conductor</ion-label></ion-segment-button>
+            </ion-segment>
+
+            <ion-input class="field" label="Nombre completo" labelPlacement="floating" fill="outline" name="name" [(ngModel)]="form.name"></ion-input>
+            <ion-input class="field" label="Correo" labelPlacement="floating" fill="outline" type="email" name="email" [(ngModel)]="form.email"></ion-input>
+            <ion-input class="field" label="Teléfono" labelPlacement="floating" fill="outline" type="tel" name="phone" [(ngModel)]="form.phone"></ion-input>
+            <ion-input class="field" label="Contraseña (mín. 8)" labelPlacement="floating" fill="outline" type="password" name="password" [(ngModel)]="form.password">
+              <ion-input-password-toggle slot="end"></ion-input-password-toggle>
+            </ion-input>
+
+            @if (form.role === 'driver') {
+              <p class="eyebrow vehicle-title">Licencia y vehículo</p>
+              <ion-input class="field" label="Número de licencia" labelPlacement="floating" fill="outline" name="license" [(ngModel)]="form.license_number"></ion-input>
+              <div class="grid-2">
+                <ion-input class="field" label="Placa" labelPlacement="floating" fill="outline" name="plate" [(ngModel)]="form.plate"></ion-input>
+                <ion-input class="field" label="Color" labelPlacement="floating" fill="outline" name="color" [(ngModel)]="form.color"></ion-input>
+                <ion-input class="field" label="Marca" labelPlacement="floating" fill="outline" name="brand" [(ngModel)]="form.brand"></ion-input>
+                <ion-input class="field" label="Modelo" labelPlacement="floating" fill="outline" name="model" [(ngModel)]="form.model"></ion-input>
+                <ion-input class="field" label="Año" labelPlacement="floating" fill="outline" type="number" name="year" [(ngModel)]="form.year"></ion-input>
+                <ion-input class="field" label="Capacidad" labelPlacement="floating" fill="outline" type="number" name="capacity" [(ngModel)]="form.capacity"></ion-input>
+              </div>
+              <p class="hint">Tu cuenta quedará <b>pendiente</b> hasta que un administrador la apruebe.</p>
+            }
+
+            <ion-button expand="block" type="submit" class="cta" [disabled]="loading()">
+              @if (loading()) { <ion-spinner name="crescent"></ion-spinner> } @else { Crear cuenta }
+            </ion-button>
+          </form>
+        }
+      </ion-card-content>
+    </ion-card>
+
+    <!-- ===== INGRESO RÁPIDO POR ROL ===== -->
+    <ion-card class="soft-card quick">
+      <ion-card-content>
+        <p class="eyebrow">Cuentas de prueba preconfiguradas</p>
+        <h2 class="section-title">Ingreso Rápido por Rol</h2>
+
+        @for (acc of accounts; track acc.login) {
+          <div class="account">
+            <div class="acc-icon"><ion-icon [name]="acc.icon"></ion-icon></div>
+            <div class="acc-info">
+              <strong>{{ acc.label }}</strong>
+              <span>{{ acc.name }}</span>
+              <small>{{ acc.login }} / {{ acc.password }}</small>
+            </div>
+            <div class="acc-actions">
+              <ion-button size="small" (click)="loadAccount(acc, true)" [disabled]="loading()">Entrar</ion-button>
+              <ion-button size="small" fill="outline" (click)="loadAccount(acc)">Cargar</ion-button>
+            </div>
+          </div>
+        }
+      </ion-card-content>
+    </ion-card>
+
+    <!-- ===== SERVIDOR ===== -->
+    <ion-button fill="clear" size="small" expand="block" color="medium" (click)="showServer.set(!showServer())">
+      <ion-icon slot="start" name="server"></ion-icon>
+      Servidor: {{ apiConfig.baseUrl() }}
+    </ion-button>
+    @if (showServer()) {
+      <ion-card class="soft-card">
+        <ion-card-content>
+          <ion-input class="field" label="URL base de la API" labelPlacement="floating" fill="outline"
+            [(ngModel)]="serverUrl" placeholder="http://192.168.1.10:8000/api"></ion-input>
+          <ion-button expand="block" (click)="saveServer()">Guardar servidor</ion-button>
+        </ion-card-content>
+      </ion-card>
+    }
+  </div>
+</ion-content>
