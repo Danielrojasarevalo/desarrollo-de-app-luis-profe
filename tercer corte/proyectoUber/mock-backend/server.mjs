@@ -23,7 +23,7 @@ const URBAN_SPEED_KMH = 20;
 // ===========================================================================
 export function createState() {
   return {
-    seq: { user: 7, driver: 4, vehicle: 4, request: 3, trip: 3, rating: 2, fare: 2, log: 1, location: 1 },
+    seq: { user: 7, driver: 4, vehicle: 4, request: 3, trip: 3, rating: 3, fare: 2, log: 1, location: 1 },
     users: [
       { id: 1, name: 'Admin Uber', email: 'admin@uber.com', phone: '3000000000', password: 'admin123', role: 'admin', status: 'active' },
       { id: 2, name: 'Juan Pérez', email: 'cliente@uber.com', phone: '3001234567', password: 'cliente123', role: 'client', status: 'active' },
@@ -55,6 +55,7 @@ export function createState() {
       { id: 2, request_id: 2, client_id: 5, driver_id: 2, vehicle_id: 2, fare_id: 1, status: 'completed', estimated_fare: 6500, final_fare: 6500, distance_travelled_km: 0.3, duration_travelled_min: 3, driver_arrived_at: '2026-10-20T20:04:00.000000Z', started_at: '2026-10-20T20:05:00.000000Z', completed_at: '2026-10-20T20:09:00.000000Z', created_at: '2026-10-20T20:01:00.000000Z' },
     ],
     ratings: [
+      { id: 2, trip_id: 1, client_id: 2, driver_id: 1, score: 5, comment: '¡Excelente conductor! Maneja muy bien y el carro estaba impecable.', has_incident: false, created_at: '2026-10-20T19:05:00.000000Z' },
       { id: 1, trip_id: 2, client_id: 5, driver_id: 2, score: 5, comment: 'Muy amable', has_incident: false, created_at: '2026-10-20T20:12:00.000000Z' },
     ],
     cancellations: [],
@@ -569,6 +570,35 @@ export function createApp(state = createState()) {
           trip: { id: trip.id, status: trip.status, final_fare: trip.final_fare, distance_travelled_km: trip.distance_travelled_km, duration_travelled_min: trip.duration_travelled_min, completed_at: trip.completed_at },
         },
       };
+    }],
+
+    // No está en API_DOCUMENTATION.md, pero el backend real la tiene: resumen + viajes con calificaciones.
+    ['GET', '/api/driver/trips', (req) => {
+      const { user } = requireRole(req, 'driver');
+      const driver = driverByUser(user.id);
+      const mine = S.trips.filter((t) => t.driver_id === driver.id).sort((a, b) => b.id - a.id);
+      const ratings = S.ratings.filter((r) => r.driver_id === driver.id);
+      const data = mine.map((t) => {
+        const r = S.requests.find((x) => x.id === t.request_id);
+        const c = userById(t.client_id);
+        return {
+          ...t,
+          client: { id: c.id, name: c.name, phone: c.phone },
+          request: r && { id: r.id, origin_name: r.origin_name, destination_name: r.destination_name },
+          ratings: ratings.filter((x) => x.trip_id === t.id)
+            .map((x) => ({ id: x.id, trip_id: x.trip_id, reviewer_id: x.client_id, reviewed_user_id: user.id, score: x.score, comment: x.comment, created_at: x.created_at })),
+        };
+      });
+      const completed = mine.filter((t) => t.status === 'completed');
+      const summary = {
+        total_earnings: completed.reduce((a, t) => a + (t.final_fare ?? 0), 0),
+        completed_trips: completed.length,
+        rating_average: driver.rating_average,
+        ratings_count: ratings.length,
+        approval_status: driver.approval_status,
+        availability_status: driver.availability_status,
+      };
+      return { status: 200, body: { success: true, summary, trips: { current_page: 1, last_page: 1, per_page: 20, total: data.length, data } } };
     }],
 
     ['POST', '/api/driver/location', (req, body) => {

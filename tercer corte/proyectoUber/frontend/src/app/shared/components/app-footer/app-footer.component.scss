@@ -1,0 +1,41 @@
+.app-footer {
+  margin: 24px 0 0;
+  padding: 20px 16px calc(20px + env(safe-area-inset-bottom));
+  background: var(--uber-gradient);
+  color: #ffffff;
+  text-align: center;
+  border-radius: 20px 20px 0 0;
+}
+
+.brand {
+  font-weight: 500;
+  letter-spacing: 0.02em;
+
+  b { font-weight: 900; color: #a7f3d0; }
+}
+
+.label {
+  margin-top: 8px;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  opacity: 0.8;
+}
+
+.authors {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px 16px;
+  margin-top: 6px;
+}
+
+.author {
+  font-weight: 700;
+}
+
+.year {
+  margin-top: 8px;
+  font-size: 0.75rem;
+  opacity: 0.7;
+}

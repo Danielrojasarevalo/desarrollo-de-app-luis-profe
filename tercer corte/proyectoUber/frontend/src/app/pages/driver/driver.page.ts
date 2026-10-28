@@ -5,7 +5,7 @@ import { Subscription, filter, interval, startWith, switchMap } from 'rxjs';
 
 import { DEFAULT_CENTER, PLACES } from '../../core/data/places';
 import {
-  ApprovalStatus, Availability, Coordinates, PendingRequest, Trip,
+  ApprovalStatus, Availability, Coordinates, DriverSummary, DriverTrip, PendingRequest, Trip,
 } from '../../core/models/api.models';
 import { AuthService } from '../../core/services/auth.service';
 import { DriverService } from '../../core/services/driver.service';
@@ -21,6 +21,19 @@ const TRIP_KEY = 'uber.driverTrip';
 const EARNINGS_KEY = 'uber.driverEarnings';
 
 type GpsMode = 'sim' | 'real';
+
+// Una reseña ya "aplanada" para la vista: la calificación + datos del viaje y del cliente.
+export interface DriverReview {
+  id: number;
+  tripId: number;
+  score: number;
+  comment: string;
+  date: string;
+  clientName: string;
+  initials: string;
+  origin?: string;
+  destination?: string;
+}
 
 // Viaje en curso del conductor + coordenadas de la solicitud (para el mapa y la simulación).
 export interface CurrentTrip {
@@ -41,6 +54,7 @@ export interface CurrentTrip {
  *  - Transmisión GPS en vivo cada 3 s .......... POST /driver/location
  *    Modo "Simulación" mueve el carro hacia la recogida/destino; modo "GPS Real" usa el del celular.
  *  - Resumen de ingresos del día (guardado en el dispositivo)
+ *  - Mis calificaciones: promedio, barras por estrella y reseñas ... GET /driver/trips
  */
 @Component({
   selector: 'app-driver',
@@ -71,6 +85,15 @@ export class DriverPage {
   readonly current = signal<CurrentTrip | null>(readTrip(this.tripKey));
   readonly busy = signal(false);
   readonly earnings = signal(readEarnings(this.earningsKey));
+
+  // ===== Calificaciones recibidas =====
+  readonly ratingSummary = signal<DriverSummary | null>(null);
+  readonly reviews = signal<DriverReview[]>([]);
+  readonly reviewsLoading = signal(false);
+  // El promedio lo calcula el backend; si no llega, se saca de las reseñas cargadas.
+  readonly ratingAverage = computed(() => this.ratingSummary()?.rating_average ?? average(this.reviews().map((r) => r.score)));
+  readonly ratingCount = computed(() => this.ratingSummary()?.ratings_count ?? this.reviews().length);
+  readonly ratingBars = computed(() => ratingBars(this.reviews()));
 
   // ===== GPS =====
   readonly position = signal<Coordinates>(DEFAULT_CENTER);
@@ -110,6 +133,7 @@ export class DriverPage {
       this.position.set(origin);
     }
     this.startRequestsPolling();
+    this.loadReviews();
   }
 
   ionViewWillLeave(): void {
@@ -174,6 +198,19 @@ export class DriverPage {
     });
   }
 
+  // ===== Calificaciones =====
+  loadReviews(): void {
+    this.reviewsLoading.set(true);
+    this.driver.history().subscribe({
+      next: ({ summary, trips }) => {
+        this.ratingSummary.set(summary);
+        this.reviews.set(reviewsOf(trips));
+        this.reviewsLoading.set(false);
+      },
+      error: () => this.reviewsLoading.set(false),
+    });
+  }
+
   // ===== Flujo del viaje =====
   arrive(): void {
     this.tripStep((id) => this.driver.arrive(id), 'Llegada registrada. El cliente fue notificado.');
@@ -204,6 +241,7 @@ export class DriverPage {
         this.availability.set('available');
         this.notify(`Viaje finalizado. Tarifa: $${(trip.final_fare ?? 0).toLocaleString('es-CO')} COP`, 'success');
         this.loadRequests();
+        this.loadReviews();
       },
       error: (err) => this.fail(err),
     });
@@ -383,6 +421,40 @@ export function coordsOf(req: PendingRequest, kind: 'origin' | 'destination'): C
   const name = req[`${kind}_name`];
   const place = PLACES.find((p) => p.name.startsWith(name) || name.startsWith(p.name.split(',')[0]));
   return place ? { latitude: place.latitude, longitude: place.longitude } : null;
+}
+
+// Saca las calificaciones de cada viaje y las ordena de la más reciente a la más antigua.
+export function reviewsOf(trips: DriverTrip[]): DriverReview[] {
+  return trips
+    .flatMap((t) => (t.ratings ?? []).map((r) => ({
+      id: r.id,
+      tripId: t.id,
+      score: r.score,
+      comment: r.comment?.trim() ?? '',
+      date: r.created_at ?? t.completed_at ?? '',
+      clientName: t.client?.name ?? 'Pasajero',
+      initials: initialsOf(t.client?.name ?? 'Pasajero'),
+      origin: t.request?.origin_name ?? t.origin_name,
+      destination: t.request?.destination_name ?? t.destination_name,
+    })))
+    .sort((a, b) => b.date.localeCompare(a.date));
+}
+
+// Cuántas reseñas hay de 5, 4, 3, 2 y 1 estrella, y qué porcentaje del total es cada una (para las barras).
+export function ratingBars(reviews: DriverReview[]): { score: number; count: number; percent: number }[] {
+  return [5, 4, 3, 2, 1].map((score) => {
+    const count = reviews.filter((r) => Math.round(r.score) === score).length;
+    return { score, count, percent: reviews.length ? Math.round((count / reviews.length) * 100) : 0 };
+  });
+}
+
+// "Juan Pérez" -> "JP"
+function initialsOf(name: string): string {
+  return name.split(/\s+/).filter(Boolean).slice(0, 2).map((w) => w[0].toUpperCase()).join('');
+}
+
+function average(values: number[]): number {
+  return values.length ? Math.round((values.reduce((a, b) => a + b, 0) / values.length) * 100) / 100 : 0;
 }
 
 function readTrip(key: string): CurrentTrip | null {

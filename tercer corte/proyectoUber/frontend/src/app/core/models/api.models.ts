@@ -205,6 +205,43 @@ export interface PendingRequest {
   client: { name: string; phone: string };
 }
 
+// GET /driver/trips (existe en el backend aunque no está en API_DOCUMENTATION.md):
+// resumen del conductor + sus viajes paginados, cada uno con las calificaciones que recibió.
+export interface DriverSummary {
+  total_earnings: number;
+  completed_trips: number;
+  rating_average: number;
+  ratings_count: number;
+  approval_status: ApprovalStatus;
+  availability_status: Availability;
+}
+
+export interface DriverRating {
+  id: number;
+  trip_id: number;
+  score: number;
+  comment: string | null;
+  created_at: string;
+}
+
+export interface DriverTrip extends Trip {
+  created_at?: string;
+  client?: { name: string };
+  request?: { origin_name: string; destination_name: string };
+  ratings?: DriverRating[];
+}
+
+export interface DriverTripsResponse {
+  success: boolean;
+  summary: DriverSummary;
+  trips: { current_page: number; last_page?: number; data: DriverTrip[] };
+}
+
+export interface DriverHistory {
+  summary: DriverSummary | null;
+  trips: DriverTrip[];
+}
+
 export interface LocationUpdate extends Coordinates {
   heading?: number;
   speed?: number;

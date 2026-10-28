@@ -1,6 +1,6 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
-import { STATUS_LABELS, formatCop, statusTone } from '../../core/utils/format';
+import { STATUS_LABELS, formatCop, starIcons, statusTone } from '../../core/utils/format';
 
 // {{ 6500 | cop }} -> "$6.500 COP"
 @Pipe({ name: 'cop', standalone: false })
@@ -23,5 +23,13 @@ export class StatusLabelPipe implements PipeTransform {
 export class StatusTonePipe implements PipeTransform {
   transform(value: string | null | undefined): string {
     return statusTone(value ?? undefined);
+  }
+}
+
+// @for (icon of 4.5 | stars; ...) -> 5 íconos: llenas, media y vacías
+@Pipe({ name: 'stars', standalone: false })
+export class StarsPipe implements PipeTransform {
+  transform(value: number | null | undefined): string[] {
+    return starIcons(value);
   }
 }

@@ -1,3 +1,4 @@
+import { environment } from '../../../environments/environment';
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
@@ -5,7 +6,7 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
 import { AuthService } from './auth.service';
 
-const API = 'http://127.0.0.1:8000/api';
+const API = environment.apiUrl;
 const USER = { id: 2, name: 'Juan Pérez', email: 'cliente@uber.com', role: 'client' as const, status: 'active' };
 
 // HttpTestingController intercepta las peticiones: así se prueba la URL, el método

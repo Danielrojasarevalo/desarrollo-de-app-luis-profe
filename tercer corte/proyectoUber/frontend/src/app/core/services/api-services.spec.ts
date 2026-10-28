@@ -1,3 +1,4 @@
+import { environment } from '../../../environments/environment';
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
@@ -8,7 +9,7 @@ import { ApiConfigService } from './api-config.service';
 import { ClientService } from './client.service';
 import { DriverService } from './driver.service';
 
-const API = 'http://127.0.0.1:8000/api';
+const API = environment.apiUrl;
 
 // Verifica que cada método llame al endpoint, método HTTP y cuerpo del documento.
 describe('servicios de la API', () => {

@@ -1,3 +1,4 @@
+import { environment } from '../../../environments/environment';
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
@@ -9,7 +10,7 @@ import { TEST_ACCOUNTS } from '../../core/data/places';
 import { LoginPage } from './login.page';
 import { LoginPageModule } from './login.module';
 
-const API = 'http://127.0.0.1:8000/api';
+const API = environment.apiUrl;
 
 describe('LoginPage', () => {
   let fixture: ComponentFixture<LoginPage>;

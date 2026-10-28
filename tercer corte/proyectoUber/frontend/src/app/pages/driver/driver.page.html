@@ -144,5 +144,69 @@
         </ion-card-content>
       </ion-card>
     }
+
+    <!-- ===== MIS CALIFICACIONES (GET /driver/trips) ===== -->
+    <ion-card class="soft-card ratings-card">
+      <ion-card-content>
+        <div class="row-between">
+          <div>
+            <p class="eyebrow">Lo que dicen tus pasajeros</p>
+            <h2 class="section-title">Mis calificaciones</h2>
+          </div>
+          <ion-button fill="clear" (click)="loadReviews()" [disabled]="reviewsLoading()" aria-label="Recargar calificaciones">
+            <ion-icon name="refresh"></ion-icon>
+          </ion-button>
+        </div>
+
+        <div class="rating-hero">
+          <div class="score">
+            <b>{{ ratingAverage() | number: '1.1-1' }}</b>
+            <div class="stars">
+              @for (icon of ratingAverage() | stars; track $index) { <ion-icon [name]="icon"></ion-icon> }
+            </div>
+            <small>{{ ratingCount() }} {{ ratingCount() === 1 ? 'calificación' : 'calificaciones' }}</small>
+          </div>
+          <div class="bars">
+            @for (bar of ratingBars(); track bar.score) {
+              <div class="bar">
+                <span class="label">{{ bar.score }}<ion-icon name="star"></ion-icon></span>
+                <div class="track"><div class="fill" [style.width.%]="bar.percent"></div></div>
+                <span class="count">{{ bar.count }}</span>
+              </div>
+            }
+          </div>
+        </div>
+
+        @for (r of reviews(); track r.id) {
+          <div class="review">
+            <div class="review-head">
+              <div class="initials">{{ r.initials }}</div>
+              <div class="who">
+                <strong>{{ r.clientName }}</strong>
+                <small>{{ r.date | date: 'dd/MM/yyyy · HH:mm' }}</small>
+              </div>
+              <span class="score-pill"><ion-icon name="star"></ion-icon>{{ r.score }}</span>
+            </div>
+            <div class="stars small">
+              @for (icon of r.score | stars; track $index) { <ion-icon [name]="icon"></ion-icon> }
+            </div>
+            @if (r.comment) {
+              <p class="comment">“{{ r.comment }}”</p>
+            } @else {
+              <p class="comment muted">El pasajero no dejó comentario.</p>
+            }
+            <small class="trip-ref">
+              Viaje #{{ r.tripId }}
+              @if (r.origin) { · {{ r.origin }} → {{ r.destination }} }
+            </small>
+          </div>
+        } @empty {
+          <p class="empty">
+            {{ reviewsLoading() ? 'Cargando calificaciones…' : 'Aún no tienes calificaciones. ¡Completa viajes y tus pasajeros podrán calificarte! ⭐' }}
+          </p>
+        }
+      </ion-card-content>
+    </ion-card>
   </div>
+  <app-footer></app-footer>
 </ion-content>

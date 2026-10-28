@@ -1,3 +1,4 @@
+import { environment } from '../../../environments/environment';
 import { HttpClient, provideHttpClient, withInterceptors } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
@@ -29,7 +30,7 @@ describe('authInterceptor', () => {
   function loginAs(): AuthService {
     const auth = TestBed.inject(AuthService);
     auth.login({ login: 'x', password: 'y' }).subscribe();
-    ctrl.expectOne('http://127.0.0.1:8000/api/auth/login').flush({ access_token: 'jwt-abc', user: USER });
+    ctrl.expectOne(`${environment.apiUrl}/auth/login`).flush({ access_token: 'jwt-abc', user: USER });
     return auth;
   }
 

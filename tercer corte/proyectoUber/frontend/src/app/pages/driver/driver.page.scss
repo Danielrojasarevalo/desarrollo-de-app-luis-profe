@@ -180,3 +180,147 @@
 
   b { color: var(--ion-color-primary); }
 }
+
+// ===== Mis calificaciones =====
+.rating-hero {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 18px;
+  align-items: center;
+  padding: 16px;
+  margin-bottom: 6px;
+  border-radius: 18px;
+  background: linear-gradient(135deg, #ecfdf5, #d1fae5);
+}
+
+.score {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+
+  b {
+    font-size: 2.8rem;
+    font-weight: 900;
+    line-height: 1;
+    color: var(--ion-color-tertiary);
+  }
+
+  small { color: var(--ion-color-medium); font-size: 0.75rem; }
+}
+
+.stars {
+  display: flex;
+  gap: 2px;
+  color: #f59e0b;
+  font-size: 1.05rem;
+
+  &.small { font-size: 0.85rem; margin: 6px 0 2px; }
+}
+
+.bars {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
+}
+
+.bar {
+  display: grid;
+  grid-template-columns: 28px 1fr 22px;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.78rem;
+  color: var(--ion-color-tertiary);
+
+  .label {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    font-weight: 700;
+
+    ion-icon { color: #f59e0b; font-size: 0.7rem; }
+  }
+
+  .track {
+    height: 8px;
+    border-radius: 999px;
+    background: #ffffff;
+    overflow: hidden;
+  }
+
+  .fill {
+    height: 100%;
+    border-radius: 999px;
+    background: var(--uber-gradient);
+    transition: width 0.6s ease;
+  }
+
+  .count { text-align: right; color: var(--ion-color-medium); }
+}
+
+.review {
+  padding: 14px 0;
+  border-top: 1px solid #d1fae5;
+}
+
+.review-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.initials {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--uber-gradient);
+  color: #ffffff;
+  font-weight: 800;
+  font-size: 0.9rem;
+}
+
+.who {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+
+  strong { color: var(--ion-color-tertiary); }
+  small { color: var(--ion-color-medium); font-size: 0.75rem; }
+}
+
+.score-pill {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: #fef3c7;
+  color: #92400e;
+  font-weight: 800;
+  font-size: 0.85rem;
+
+  ion-icon { color: #f59e0b; }
+}
+
+.comment {
+  margin: 4px 0 6px;
+  padding: 10px 12px;
+  border-radius: 4px 14px 14px 14px;
+  background: #f0fdf4;
+  color: #1f2937;
+  font-size: 0.92rem;
+  line-height: 1.4;
+
+  &.muted { color: var(--ion-color-medium); font-style: italic; }
+}
+
+.trip-ref {
+  display: block;
+  color: var(--ion-color-medium);
+  font-size: 0.72rem;
+}

@@ -1,7 +1,7 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { describe, expect, it } from 'vitest';
 
-import { apiErrorMessage, formatCop, statusTone } from './format';
+import { apiErrorMessage, formatCop, starIcons, statusTone } from './format';
 
 describe('mensajes de error y formato', () => {
   it('FE-07 status 0 indica que el backend no responde', () => {
@@ -35,5 +35,12 @@ describe('mensajes de error y formato', () => {
     expect(statusTone('requested')).toBe('warn');
     expect(statusTone('cancelled')).toBe('bad');
     expect(statusTone('completed')).toBe('');
+  });
+
+  it('FE-46 convierte el promedio en 5 estrellas (llenas, media y vacías)', () => {
+    expect(starIcons(5)).toEqual(['star', 'star', 'star', 'star', 'star']);
+    expect(starIcons(4.5)).toEqual(['star', 'star', 'star', 'star', 'star-half']);
+    expect(starIcons(3.2)).toEqual(['star', 'star', 'star', 'star-outline', 'star-outline']);
+    expect(starIcons(null)).toEqual(Array(5).fill('star-outline'));
   });
 });

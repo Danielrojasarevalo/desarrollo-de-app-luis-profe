@@ -1,8 +1,10 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { Observable, map } from 'rxjs';
+import { EMPTY, Observable, expand, map, reduce } from 'rxjs';
 
-import { Availability, LocationUpdate, PendingRequest, Trip } from '../models/api.models';
+import {
+  Availability, DriverHistory, DriverTripsResponse, LocationUpdate, PendingRequest, Trip,
+} from '../models/api.models';
 import { ApiConfigService } from './api-config.service';
 
 /*
@@ -49,6 +51,19 @@ export class DriverService {
       actual_distance_km: actualDistanceKm,
       actual_duration_min: actualDurationMin,
     });
+  }
+
+  // GET /driver/trips?page=N  -> resumen + viajes con sus calificaciones.
+  // Laravel pagina de a 20: expand pide la página siguiente mientras haya, y reduce las junta todas.
+  history(): Observable<DriverHistory> {
+    const page = (n: number) => this.http.get<DriverTripsResponse>(this.api.url(`/driver/trips?page=${n}`));
+    return page(1).pipe(
+      expand((r) => (r.trips.current_page < (r.trips.last_page ?? 1) ? page(r.trips.current_page + 1) : EMPTY)),
+      reduce<DriverTripsResponse, DriverHistory>(
+        (acc, r) => ({ summary: acc.summary ?? r.summary, trips: [...acc.trips, ...r.trips.data] }),
+        { summary: null, trips: [] },
+      ),
+    );
   }
 
   // POST /driver/location

@@ -75,3 +75,10 @@ export function statusTone(status: string | undefined): string {
       return '';
   }
 }
+
+// 4.5 -> ['star', 'star', 'star', 'star', 'star-half']  (nombres de ion-icon, siempre 5)
+// Se redondea a la media estrella más cercana para pintar el promedio del conductor.
+export function starIcons(value: number | null | undefined): string[] {
+  const halves = Math.round(Math.min(5, Math.max(0, value ?? 0)) * 2);
+  return [1, 2, 3, 4, 5].map((i) => (halves >= i * 2 ? 'star' : halves === i * 2 - 1 ? 'star-half' : 'star-outline'));
+}
